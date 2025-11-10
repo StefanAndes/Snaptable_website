@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SnapTable - Turn Any Table Into Spreadsheet Data</title>
+    <meta name="description" content="Stop manually copying data from PDFs and images. SnapTable extracts tables instantly with one click. 100% private. 7-day free trial.">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+        * {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        .gradient-text {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .glass {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .hover-lift {
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .hover-lift:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        body {
+            background: linear-gradient(to bottom, #0f0f0f 0%, #1a1a1a 100%);
+            color: #ffffff;
+        }
+
+        .video-placeholder {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .video-placeholder::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80px;
+            height: 80px;
+            border: 4px solid white;
+            border-radius: 50%;
+            opacity: 0.3;
+        }
+
+        .video-placeholder::after {
+            content: '▶';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-40%, -50%);
+            font-size: 32px;
+            color: white;
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- Navigation -->
+    <nav class="fixed top-0 w-full z-50 glass">
+        <div class="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
+            <div class="text-2xl font-bold gradient-text">SnapTable</div>
+            <div class="flex gap-6 items-center">
+                <a href="#how-it-works" class="text-gray-300 hover:text-white transition">How it Works</a>
+                <a href="#pricing" class="text-gray-300 hover:text-white transition">Pricing</a>
+                <a href="#faq" class="text-gray-300 hover:text-white transition">FAQ</a>
+                <a href="#download" class="bg-gradient-to-r from-purple-600 to-indigo-600 px-6 py-2 rounded-lg font-medium hover:shadow-lg hover:shadow-purple-500/50 transition">
+                    Start Free Trial
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="pt-32 pb-20 px-6">
+        <div class="max-w-6xl mx-auto text-center">
+            <div class="inline-block mb-4 px-4 py-2 glass rounded-full text-sm text-purple-300">
+                ✨ 7-Day Free Trial • No Credit Card Required
+            </div>
+
+            <h1 class="text-6xl md:text-7xl font-bold mb-6 leading-tight">
+                Turn Any Table Into<br/>
+                <span class="gradient-text">Spreadsheet Data</span>
+            </h1>
+
+            <p class="text-xl text-gray-400 mb-12 max-w-2xl mx-auto">
+                Stop wasting hours manually copying data from PDFs and images.
+                One click extracts perfect tables. Every time.
+            </p>
+
+            <div class="flex gap-4 justify-center mb-16">
+                <a href="#download" class="bg-gradient-to-r from-purple-600 to-indigo-600 px-8 py-4 rounded-xl font-semibold text-lg hover:shadow-lg hover:shadow-purple-500/50 transition transform hover:scale-105">
+                    Download Free Trial
+                </a>
+                <a href="#demo" class="glass px-8 py-4 rounded-xl font-semibold text-lg hover:bg-white/10 transition">
+                    Watch Demo
+                </a>
+            </div>
+
+            <!-- Demo Video -->
+            <div id="demo" class="max-w-4xl mx-auto rounded-2xl overflow-hidden shadow-2xl hover-lift">
+                <video
+                    class="w-full"
+                    autoplay
+                    muted
+                    loop
+                    playsinline>
+                    <source src="demo.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+            </div>
+        </div>
+    </section>
+
+    <!-- Benefits Section -->
+    <section class="py-20 px-6">
+        <div class="max-w-6xl mx-auto">
+            <h2 class="text-4xl font-bold text-center mb-16">Why SnapTable?</h2>
+
+            <div class="grid md:grid-cols-3 gap-8">
+                <!-- Benefit 1 -->
+                <div class="glass p-8 rounded-2xl hover-lift">
+                    <div class="text-4xl mb-4">⚡</div>
+                    <h3 class="text-2xl font-semibold mb-3">Saves Hours of Time</h3>
+                    <p class="text-gray-400">
+                        What used to take 30 minutes of tedious copy-paste now takes 3 seconds.
+                        Extract perfect tables instantly from any PDF, screenshot, or image.
+                    </p>
+                </div>
+
+                <!-- Benefit 2 -->
+                <div class="glass p-8 rounded-2xl hover-lift">
+                    <div class="text-4xl mb-4">😌</div>
+                    <h3 class="text-2xl font-semibold mb-3">Reduces Anxiety</h3>
+                    <p class="text-gray-400">
+                        No more worrying about typos, missed cells, or formatting errors.
+                        Get accurate data every time without the mental stress of manual entry.
+                    </p>
+                </div>
+
+                <!-- Benefit 3 -->
+                <div class="glass p-8 rounded-2xl hover-lift">
+                    <div class="text-4xl mb-4">🔒</div>
+                    <h3 class="text-2xl font-semibold mb-3">100% Private</h3>
+                    <p class="text-gray-400">
+                        Your data never leaves your control. We don't collect, store, or analyze
+                        any of your screenshots or extracted data. Completely private.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works -->
+    <section id="how-it-works" class="py-20 px-6 bg-black/30">
+        <div class="max-w-4xl mx-auto">
+            <h2 class="text-4xl font-bold text-center mb-16">How It Works</h2>
+
+            <div class="space-y-12">
+                <div class="flex gap-6 items-start">
+                    <div class="flex-shrink-0 w-12 h-12 bg-gradient-to-r from-purple-600 to-indigo-600 rounded-full flex items-center justify-center text-xl font-bold">
+                        1
+                    </div>
+                    <div>
+                        <h3 class="text-2xl font-semibold mb-2">Trigger SnapTable</h3>
+                        <p class="text-gray-400">Middle-click or double right-click anywhere. Your screen dims and you're ready to capture.</p>
+                    </div>
+                </div>
+
+                <div class="flex gap-6 items-start">
+                    <div class="flex-shrink-0 w-12 h-12 bg-gradient-to-r from-purple-600 to-indigo-600 rounded-full flex items-center justify-center text-xl font-bold">
+                        2
+                    </div>
+                    <div>
+                        <h3 class="text-2xl font-semibold mb-2">Select Your Table</h3>
+                        <p class="text-gray-400">Click and drag to select the table you want to extract. Works with PDFs, images, anything on your screen.</p>
+                    </div>
+                </div>
+
+                <div class="flex gap-6 items-start">
+                    <div class="flex-shrink-0 w-12 h-12 bg-gradient-to-r from-purple-600 to-indigo-600 rounded-full flex items-center justify-center text-xl font-bold">
+                        3
+                    </div>
+                    <div>
+                        <h3 class="text-2xl font-semibold mb-2">Paste Into Excel</h3>
+                        <p class="text-gray-400">Your table is instantly extracted and copied to clipboard. Just paste (Ctrl+V) into Excel, Google Sheets, or anywhere.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section id="pricing" class="py-20 px-6">
+        <div class="max-w-6xl mx-auto text-center">
+            <h2 class="text-4xl font-bold mb-6">Simple, Transparent Pricing</h2>
+            <p class="text-gray-400 mb-16 text-lg">Start free. Choose the plan that fits your needs.</p>
+
+            <div class="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+                <!-- Starter Tier -->
+                <div class="glass p-8 rounded-2xl hover-lift border-2 border-purple-600 relative">
+                    <div class="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-purple-600 to-indigo-600 px-4 py-1 rounded-full text-sm font-semibold">
+                        Most Popular
+                    </div>
+                    <h3 class="text-2xl font-semibold mb-2">Starter</h3>
+                    <div class="text-5xl font-bold mb-6">
+                        $4.99
+                        <span class="text-lg text-gray-400 font-normal">/month</span>
+                    </div>
+                    <ul class="text-left space-y-3 mb-8 min-h-[200px]">
+                        <li class="flex items-start gap-3">
+                            <span class="text-green-400 mt-1">✓</span>
+                            <span><strong>750 captures/month</strong></span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <span class="text-green-400 mt-1">✓</span>
+                            <span>~25 captures per day</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <span class="text-green-400 mt-1">✓</span>
+                            <span>All extraction features</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <span class="text-green-400 mt-1">✓</span>
+                            <span>Email support</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <span class="text-green-400 mt-1">✓</span>
+                            <span>Cancel anytime</span>
+                        </li>
+                    </ul>
+                    <a href="STRIPE_STARTER_LINK" class="block w-full bg-gradient-to-r from-purple-600 to-indigo-600 py-3 rounded-lg font-semibold hover:shadow-lg hover:shadow-purple-500/50 transition">
+                        Start 7-Day Free Trial
+                    </a>
+                </div>
+
+                <!-- Pro Tier -->
+                <div class="glass p-8 rounded-2xl hover-lift border-2 border-transparent hover:border-indigo-600/50">
+                    <h3 class="text-2xl font-semibold mb-2">Pro</h3>
+                    <div class="text-5xl font-bold mb-6">
+                        $11.99
+                        <span class="text-lg text-gray-400 font-normal">/month</span>
+                    </div>
+                    <ul class="text-left space-y-3 mb-8 min-h-[200px]">
+                        <li class="flex items-start gap-3">
+                            <span class="text-green-400 mt-1">✓</span>
+                            <span><strong>2,000 captures/month</strong></span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <span class="text-green-400 mt-1">✓</span>
+                            <span>~67 captures per day</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <span class="text-green-400 mt-1">✓</span>
+                            <span>All extraction features</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <span class="text-green-400 mt-1">✓</span>
+                            <span>Priority support</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <span class="text-green-400 mt-1">✓</span>
+                            <span>Cancel anytime</span>
+                        </li>
+                    </ul>
+                    <a href="STRIPE_PRO_LINK" class="block w-full glass py-3 rounded-lg font-semibold hover:bg-white/10 transition">
+                        Start 7-Day Free Trial
+                    </a>
+                </div>
+            </div>
+
+            <p class="text-gray-500 mt-12 text-sm">
+                * 7-day free trial with unlimited captures. No credit card required to start. Cancel anytime.
+            </p>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section id="faq" class="py-20 px-6 bg-black/30">
+        <div class="max-w-3xl mx-auto">
+            <h2 class="text-4xl font-bold text-center mb-16">Frequently Asked Questions</h2>
+
+            <div class="space-y-6">
+                <details class="glass p-6 rounded-xl group">
+                    <summary class="text-xl font-semibold cursor-pointer list-none flex justify-between items-center">
+                        What file formats does SnapTable support?
+                        <span class="transform group-open:rotate-45 transition">+</span>
+                    </summary>
+                    <p class="text-gray-400 mt-4">
+                        SnapTable works with anything visible on your screen - PDFs, images (PNG, JPG),
+                        web pages, scanned documents, and more. If you can see it, you can capture it.
+                    </p>
+                </details>
+
+                <details class="glass p-6 rounded-xl group">
+                    <summary class="text-xl font-semibold cursor-pointer list-none flex justify-between items-center">
+                        Is my data really private?
+                        <span class="transform group-open:rotate-45 transition">+</span>
+                    </summary>
+                    <p class="text-gray-400 mt-4">
+                        Absolutely. We process your screenshots to extract table data, but we never store,
+                        collect, or analyze your data. Everything happens securely and your screenshots are
+                        immediately discarded after processing.
+                    </p>
+                </details>
+
+                <details class="glass p-6 rounded-xl group">
+                    <summary class="text-xl font-semibold cursor-pointer list-none flex justify-between items-center">
+                        Does it work on Mac or Linux?
+                        <span class="transform group-open:rotate-45 transition">+</span>
+                    </summary>
+                    <p class="text-gray-400 mt-4">
+                        Currently SnapTable is Windows-only (Windows 10 and 11). Mac and Linux versions
+                        are on our roadmap based on user demand.
+                    </p>
+                </details>
+
+                <details class="glass p-6 rounded-xl group">
+                    <summary class="text-xl font-semibold cursor-pointer list-none flex justify-between items-center">
+                        What happens after the free trial?
+                        <span class="transform group-open:rotate-45 transition">+</span>
+                    </summary>
+                    <p class="text-gray-400 mt-4">
+                        After 7 days, you'll be prompted to subscribe to continue using SnapTable.
+                        No automatic charges - you decide if you want to upgrade to Pro.
+                    </p>
+                </details>
+
+                <details class="glass p-6 rounded-xl group">
+                    <summary class="text-xl font-semibold cursor-pointer list-none flex justify-between items-center">
+                        Can I cancel anytime?
+                        <span class="transform group-open:rotate-45 transition">+</span>
+                    </summary>
+                    <p class="text-gray-400 mt-4">
+                        Yes! Cancel your subscription anytime from your account. No questions asked,
+                        no cancellation fees.
+                    </p>
+                </details>
+
+                <details class="glass p-6 rounded-xl group">
+                    <summary class="text-xl font-semibold cursor-pointer list-none flex justify-between items-center">
+                        How accurate is the table extraction?
+                        <span class="transform group-open:rotate-45 transition">+</span>
+                    </summary>
+                    <p class="text-gray-400 mt-4">
+                        SnapTable uses advanced AI to extract tables with high accuracy. It works best
+                        with clear, well-structured tables. Complex or poorly formatted tables may need
+                        minor touch-ups.
+                    </p>
+                </details>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section id="download" class="py-20 px-6">
+        <div class="max-w-4xl mx-auto text-center">
+            <h2 class="text-5xl font-bold mb-6">Ready to Save Hours Every Week?</h2>
+            <p class="text-xl text-gray-400 mb-10">
+                Join professionals who've stopped manually copying tables.
+            </p>
+
+            <div class="inline-flex flex-col gap-4">
+                <a href="DOWNLOAD_LINK" class="bg-gradient-to-r from-purple-600 to-indigo-600 px-12 py-5 rounded-xl font-semibold text-xl hover:shadow-lg hover:shadow-purple-500/50 transition transform hover:scale-105">
+                    Download SnapTable - Free Trial
+                </a>
+                <p class="text-gray-500 text-sm">Windows 10/11 • 7-Day Free Trial • No Credit Card</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-12 px-6 border-t border-gray-800">
+        <div class="max-w-6xl mx-auto text-center text-gray-500">
+            <p>&copy; 2025 SnapTable. All rights reserved.</p>
+            <div class="mt-4 flex gap-6 justify-center text-sm">
+                <a href="#" class="hover:text-white transition">Privacy Policy</a>
+                <a href="#" class="hover:text-white transition">Terms of Service</a>
+                <a href="#" class="hover:text-white transition">Contact</a>
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>
