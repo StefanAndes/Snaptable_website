@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Download SnapTable - Thank You!</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background: linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 100%);
+            color: white;
+            min-height: 100vh;
+        }
+        .glass {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .license-box {
+            background: #1a1a1a;
+            border: 2px solid #4f46e5;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            font-family: 'Courier New', monospace;
+            font-size: 1.5rem;
+            letter-spacing: 0.1em;
+            text-align: center;
+            margin: 2rem 0;
+        }
+        .copy-btn {
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .copy-btn:hover {
+            transform: scale(1.05);
+        }
+        .step-number {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            width: 3rem;
+            height: 3rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="max-w-4xl mx-auto px-6 py-12">
+        <!-- Success Header -->
+        <div class="text-center mb-12">
+            <div class="text-6xl mb-4">🎉</div>
+            <h1 class="text-5xl font-bold mb-4">Welcome to SnapTable!</h1>
+            <p class="text-xl text-gray-400">Your 7-day free trial starts now. No charges until trial ends.</p>
+        </div>
+
+        <!-- License Key Section -->
+        <div class="glass rounded-2xl p-8 mb-8">
+            <h2 class="text-2xl font-bold mb-4 text-center">Your License Key</h2>
+            <p class="text-gray-400 text-center mb-4">Save this key - you'll need it to activate SnapTable</p>
+
+            <div class="license-box" id="licenseKey">
+                <span id="keyText">Loading...</span>
+            </div>
+
+            <button onclick="copyLicenseKey()" class="copy-btn w-full bg-gradient-to-r from-purple-600 to-indigo-600 py-3 rounded-lg font-semibold hover:shadow-lg hover:shadow-purple-500/50 transition">
+                📋 Copy License Key
+            </button>
+            <p id="copyConfirm" class="text-green-400 text-center mt-2 opacity-0 transition-opacity">✓ Copied to clipboard!</p>
+        </div>
+
+        <!-- Download Section -->
+        <div class="glass rounded-2xl p-8 mb-8">
+            <h2 class="text-2xl font-bold mb-6 text-center">Download SnapTable</h2>
+
+            <a href="YOUR_DOWNLOAD_LINK_HERE" class="block w-full bg-gradient-to-r from-green-600 to-emerald-600 py-4 rounded-lg font-semibold text-xl hover:shadow-lg hover:shadow-green-500/50 transition text-center mb-4">
+                ⬇️ Download SnapTable for Windows
+            </a>
+
+            <p class="text-gray-400 text-sm text-center">Windows 10/11 • ~50MB • Version 1.0.0</p>
+        </div>
+
+        <!-- Getting Started Steps -->
+        <div class="glass rounded-2xl p-8 mb-8">
+            <h2 class="text-2xl font-bold mb-6">Getting Started in 3 Easy Steps</h2>
+
+            <div class="space-y-6">
+                <!-- Step 1 -->
+                <div class="flex gap-4 items-start">
+                    <div class="step-number">1</div>
+                    <div>
+                        <h3 class="text-xl font-semibold mb-2">Download & Install</h3>
+                        <p class="text-gray-400">Click the download button above. Run SnapTable.exe - no installation required!</p>
+                    </div>
+                </div>
+
+                <!-- Step 2 -->
+                <div class="flex gap-4 items-start">
+                    <div class="step-number">2</div>
+                    <div>
+                        <h3 class="text-xl font-semibold mb-2">Enter Your License Key</h3>
+                        <p class="text-gray-400">When SnapTable opens, paste your license key from above to activate.</p>
+                    </div>
+                </div>
+
+                <!-- Step 3 -->
+                <div class="flex gap-4 items-start">
+                    <div class="step-number">3</div>
+                    <div>
+                        <h3 class="text-xl font-semibold mb-2">Start Capturing!</h3>
+                        <p class="text-gray-400">Use Ctrl+Shift+T to capture any table on your screen. Data is instantly copied to your clipboard!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- What You Get -->
+        <div class="glass rounded-2xl p-8 mb-8">
+            <h2 class="text-2xl font-bold mb-6">What's Included in Your Trial</h2>
+
+            <div class="grid md:grid-cols-2 gap-4">
+                <div class="flex items-start gap-3">
+                    <span class="text-green-400 text-xl">✓</span>
+                    <span>Unlimited table captures</span>
+                </div>
+                <div class="flex items-start gap-3">
+                    <span class="text-green-400 text-xl">✓</span>
+                    <span>Multi-monitor support</span>
+                </div>
+                <div class="flex items-start gap-3">
+                    <span class="text-green-400 text-xl">✓</span>
+                    <span>Zero-storage security</span>
+                </div>
+                <div class="flex items-start gap-3">
+                    <span class="text-green-400 text-xl">✓</span>
+                    <span>HIPAA compliant</span>
+                </div>
+                <div class="flex items-start gap-3">
+                    <span class="text-green-400 text-xl">✓</span>
+                    <span>Bank-level encryption</span>
+                </div>
+                <div class="flex items-start gap-3">
+                    <span class="text-green-400 text-xl">✓</span>
+                    <span>Cancel anytime</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Trial Information -->
+        <div class="glass rounded-2xl p-8 mb-8">
+            <h2 class="text-2xl font-bold mb-4">About Your Trial</h2>
+
+            <div class="space-y-3 text-gray-300">
+                <p><strong>Trial Period:</strong> 7 days from today</p>
+                <p><strong>First Charge:</strong> <span id="chargeDate">7 days from now</span></p>
+                <p><strong>Billing:</strong> Monthly subscription (cancel anytime)</p>
+                <p><strong>Support:</strong> Email us at <a href="mailto:info@snaptable.app" class="text-purple-400 hover:underline">info@snaptable.app</a></p>
+            </div>
+
+            <div class="mt-6 p-4 bg-yellow-900/20 border border-yellow-700/50 rounded-lg">
+                <p class="text-yellow-200 text-sm">
+                    <strong>💡 Reminder:</strong> You won't be charged during your 7-day trial. Cancel anytime before trial ends to pay nothing.
+                </p>
+            </div>
+        </div>
+
+        <!-- Email Confirmation -->
+        <div class="text-center text-gray-400">
+            <p class="mb-4">📧 A copy of your license key has been sent to your email</p>
+            <p>Need help? <a href="mailto:info@snaptable.app" class="text-purple-400 hover:underline">Contact Support</a></p>
+        </div>
+    </div>
+
+    <script>
+        // Get license key from URL parameter
+        function getLicenseKey() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const license = urlParams.get('license');
+
+            if (license) {
+                document.getElementById('keyText').textContent = license;
+            } else {
+                // If no license in URL, try to fetch from Stripe session
+                const sessionId = urlParams.get('session_id');
+                if (sessionId) {
+                    // You'll need to implement this endpoint to fetch license from session
+                    fetch(`/api/get-license?session_id=${sessionId}`)
+                        .then(res => res.json())
+                        .then(data => {
+                            if (data.license_key) {
+                                document.getElementById('keyText').textContent = data.license_key;
+                            } else {
+                                document.getElementById('keyText').textContent = 'Check your email for license key';
+                            }
+                        })
+                        .catch(() => {
+                            document.getElementById('keyText').textContent = 'Check your email for license key';
+                        });
+                } else {
+                    document.getElementById('keyText').textContent = 'Check your email for license key';
+                }
+            }
+        }
+
+        // Copy license key to clipboard
+        function copyLicenseKey() {
+            const keyText = document.getElementById('keyText').textContent;
+
+            if (keyText && keyText !== 'Loading...' && keyText !== 'Check your email for license key') {
+                navigator.clipboard.writeText(keyText).then(() => {
+                    const confirmMsg = document.getElementById('copyConfirm');
+                    confirmMsg.style.opacity = '1';
+                    setTimeout(() => {
+                        confirmMsg.style.opacity = '0';
+                    }, 2000);
+                });
+            }
+        }
+
+        // Calculate charge date (7 days from now)
+        function setChargeDate() {
+            const chargeDate = new Date();
+            chargeDate.setDate(chargeDate.getDate() + 7);
+            document.getElementById('chargeDate').textContent = chargeDate.toLocaleDateString('en-US', {
+                month: 'long',
+                day: 'numeric',
+                year: 'numeric'
+            });
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            getLicenseKey();
+            setChargeDate();
+        });
+    </script>
+</body>
+</html>
