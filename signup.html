@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up - SnapTable</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background: linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 100%);
+            color: white;
+            min-height: 100vh;
+        }
+        .glass {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .input-field {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: white;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            width: 100%;
+        }
+        .input-field:focus {
+            outline: none;
+            border-color: #8b5cf6;
+            background: rgba(255, 255, 255, 0.08);
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 0.75rem 2rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(139, 92, 246, 0.3);
+        }
+        .error-message {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #fca5a5;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            display: none;
+        }
+        .success-message {
+            background: rgba(34, 197, 94, 0.1);
+            border: 1px solid rgba(34, 197, 94, 0.3);
+            color: #86efac;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            display: none;
+        }
+        .password-strength {
+            height: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+            margin-top: 0.5rem;
+            overflow: hidden;
+        }
+        .password-strength-bar {
+            height: 100%;
+            width: 0%;
+            transition: all 0.3s;
+        }
+    </style>
+</head>
+<body>
+    <div class="min-h-screen flex items-center justify-center px-6 py-12">
+        <div class="max-w-md w-full">
+            <!-- Logo/Header -->
+            <div class="text-center mb-8">
+                <h1 class="text-4xl font-bold mb-2">SnapTable</h1>
+                <p class="text-gray-400">Create your account</p>
+            </div>
+
+            <!-- Signup Form -->
+            <div class="glass rounded-2xl p-8">
+                <!-- Error Message -->
+                <div id="errorMessage" class="error-message mb-4"></div>
+
+                <!-- Success Message -->
+                <div id="successMessage" class="success-message mb-4"></div>
+
+                <form id="signupForm" class="space-y-4">
+                    <!-- Full Name -->
+                    <div>
+                        <label for="fullName" class="block text-sm font-medium mb-2">Full Name (Optional)</label>
+                        <input
+                            type="text"
+                            id="fullName"
+                            name="fullName"
+                            class="input-field"
+                            placeholder="John Doe"
+                            autocomplete="name"
+                        />
+                    </div>
+
+                    <!-- Email -->
+                    <div>
+                        <label for="email" class="block text-sm font-medium mb-2">Email</label>
+                        <input
+                            type="email"
+                            id="email"
+                            name="email"
+                            class="input-field"
+                            placeholder="your@email.com"
+                            required
+                            autocomplete="email"
+                        />
+                    </div>
+
+                    <!-- Password -->
+                    <div>
+                        <label for="password" class="block text-sm font-medium mb-2">Password</label>
+                        <input
+                            type="password"
+                            id="password"
+                            name="password"
+                            class="input-field"
+                            placeholder="At least 8 characters"
+                            required
+                            autocomplete="new-password"
+                            minlength="8"
+                        />
+                        <div class="password-strength">
+                            <div id="passwordStrengthBar" class="password-strength-bar"></div>
+                        </div>
+                        <p id="passwordHint" class="text-xs text-gray-500 mt-1"></p>
+                    </div>
+
+                    <!-- Confirm Password -->
+                    <div>
+                        <label for="confirmPassword" class="block text-sm font-medium mb-2">Confirm Password</label>
+                        <input
+                            type="password"
+                            id="confirmPassword"
+                            name="confirmPassword"
+                            class="input-field"
+                            placeholder="Re-enter password"
+                            required
+                            autocomplete="new-password"
+                        />
+                    </div>
+
+                    <!-- Terms -->
+                    <div class="flex items-start">
+                        <input type="checkbox" id="terms" class="mt-1 mr-2" required>
+                        <label for="terms" class="text-sm text-gray-400">
+                            I agree to the <a href="#" class="text-purple-400 hover:text-purple-300">Terms of Service</a>
+                            and <a href="#" class="text-purple-400 hover:text-purple-300">Privacy Policy</a>
+                        </label>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <button type="submit" class="btn-primary w-full" id="signupBtn">
+                        Create Account
+                    </button>
+                </form>
+
+                <!-- Divider -->
+                <div class="relative my-6">
+                    <div class="absolute inset-0 flex items-center">
+                        <div class="w-full border-t border-gray-700"></div>
+                    </div>
+                    <div class="relative flex justify-center text-sm">
+                        <span class="px-2 bg-transparent text-gray-400">Already have an account?</span>
+                    </div>
+                </div>
+
+                <!-- Login Link -->
+                <a href="login.html" class="block text-center py-3 px-4 rounded-lg border border-gray-700 hover:border-purple-600 transition">
+                    Login
+                </a>
+
+                <!-- Back to Home -->
+                <div class="mt-6 text-center">
+                    <a href="index.html" class="text-sm text-gray-400 hover:text-white">
+                        ← Back to Home
+                    </a>
+                </div>
+            </div>
+
+            <!-- Info Box -->
+            <div class="mt-6 glass rounded-xl p-4 text-center text-sm text-gray-400">
+                <p>💡 <strong>Tip:</strong> Create an account first, then subscribe to a plan!</p>
+                <p class="mt-2">Or subscribe first and we'll create your account automatically.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // API Configuration
+        const API_BASE_URL = 'https://YOUR-API-GATEWAY-URL'; // TODO: Replace with your actual API URL
+
+        // Get form elements
+        const signupForm = document.getElementById('signupForm');
+        const signupBtn = document.getElementById('signupBtn');
+        const errorMessage = document.getElementById('errorMessage');
+        const successMessage = document.getElementById('successMessage');
+        const passwordInput = document.getElementById('password');
+        const confirmPasswordInput = document.getElementById('confirmPassword');
+        const passwordStrengthBar = document.getElementById('passwordStrengthBar');
+        const passwordHint = document.getElementById('passwordHint');
+
+        // Password strength indicator
+        passwordInput.addEventListener('input', () => {
+            const password = passwordInput.value;
+            const strength = calculatePasswordStrength(password);
+
+            // Update strength bar
+            passwordStrengthBar.style.width = `${strength.score}%`;
+
+            if (strength.score < 30) {
+                passwordStrengthBar.style.background = '#ef4444'; // Red
+                passwordHint.textContent = 'Weak password';
+                passwordHint.style.color = '#ef4444';
+            } else if (strength.score < 70) {
+                passwordStrengthBar.style.background = '#f59e0b'; // Orange
+                passwordHint.textContent = 'Medium strength';
+                passwordHint.style.color = '#f59e0b';
+            } else {
+                passwordStrengthBar.style.background = '#22c55e'; // Green
+                passwordHint.textContent = 'Strong password';
+                passwordHint.style.color = '#22c55e';
+            }
+        });
+
+        function calculatePasswordStrength(password) {
+            let score = 0;
+
+            if (password.length >= 8) score += 25;
+            if (password.length >= 12) score += 25;
+            if (/[a-z]/.test(password) && /[A-Z]/.test(password)) score += 20;
+            if (/\d/.test(password)) score += 15;
+            if (/[^a-zA-Z\d]/.test(password)) score += 15;
+
+            return { score: Math.min(score, 100) };
+        }
+
+        // Handle form submission
+        signupForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const email = document.getElementById('email').value;
+            const password = passwordInput.value;
+            const confirmPassword = confirmPasswordInput.value;
+            const fullName = document.getElementById('fullName').value;
+
+            // Hide previous messages
+            hideMessages();
+
+            // Validation
+            if (password !== confirmPassword) {
+                showError('Passwords do not match');
+                return;
+            }
+
+            if (password.length < 8) {
+                showError('Password must be at least 8 characters');
+                return;
+            }
+
+            // Disable button
+            signupBtn.disabled = true;
+            signupBtn.textContent = 'Creating account...';
+
+            try {
+                // Call signup API
+                const response = await fetch(`${API_BASE_URL}/auth/signup`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        email,
+                        password,
+                        full_name: fullName
+                    })
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.success) {
+                    // Signup successful
+                    showSuccess('Account created successfully! Redirecting to login...');
+
+                    // Redirect to login after 2 seconds
+                    setTimeout(() => {
+                        window.location.href = `login.html?email=${encodeURIComponent(email)}`;
+                    }, 2000);
+
+                } else {
+                    // Signup failed
+                    showError(data.error || 'Signup failed. Please try again.');
+                    signupBtn.disabled = false;
+                    signupBtn.textContent = 'Create Account';
+                }
+
+            } catch (error) {
+                console.error('Signup error:', error);
+                showError('Network error. Please check your connection and try again.');
+                signupBtn.disabled = false;
+                signupBtn.textContent = 'Create Account';
+            }
+        });
+
+        function showError(message) {
+            errorMessage.textContent = message;
+            errorMessage.style.display = 'block';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function showSuccess(message) {
+            successMessage.textContent = message;
+            successMessage.style.display = 'block';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function hideMessages() {
+            errorMessage.style.display = 'none';
+            successMessage.style.display = 'none';
+        }
+
+        // Pre-fill email if coming from login page
+        window.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const email = urlParams.get('email');
+            if (email) {
+                document.getElementById('email').value = email;
+            }
+        });
+    </script>
+</body>
+</html>

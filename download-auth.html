@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Download SnapTable - Welcome!</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background: linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 100%);
+            color: white;
+            min-height: 100vh;
+        }
+        .glass {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .step-number {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            width: 3rem;
+            height: 3rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="max-w-4xl mx-auto px-6 py-12">
+        <!-- Success Header -->
+        <div class="text-center mb-12">
+            <div class="text-6xl mb-4">🎉</div>
+            <h1 class="text-5xl font-bold mb-4">Welcome to SnapTable!</h1>
+            <p class="text-xl text-gray-400" id="welcomeText">Loading...</p>
+        </div>
+
+        <!-- User Info (if logged in) -->
+        <div id="userInfo" class="glass rounded-xl p-6 mb-8 text-center" style="display: none;">
+            <p class="text-gray-300">
+                <strong>Email:</strong> <span id="userEmail"></span><br>
+                <strong>Plan:</strong> <span id="userPlan"></span><br>
+                <strong>Status:</strong> <span id="subscriptionStatus"></span>
+            </p>
+        </div>
+
+        <!-- Download Section -->
+        <div class="glass rounded-2xl p-8 mb-8">
+            <h2 class="text-2xl font-bold mb-6 text-center">Download SnapTable</h2>
+
+            <a href="YOUR_DOWNLOAD_LINK_HERE" id="downloadBtn" class="block w-full bg-gradient-to-r from-green-600 to-emerald-600 py-4 rounded-lg font-semibold text-xl hover:shadow-lg hover:shadow-green-500/50 transition text-center mb-4">
+                ⬇️ Download SnapTable for Windows
+            </a>
+
+            <p class="text-gray-400 text-sm text-center">Windows 10/11 • ~50MB • Version 1.0.0</p>
+        </div>
+
+        <!-- Getting Started Steps -->
+        <div class="glass rounded-2xl p-8 mb-8">
+            <h2 class="text-2xl font-bold mb-6">Getting Started in 3 Easy Steps</h2>
+
+            <div class="space-y-6">
+                <!-- Step 1 -->
+                <div class="flex gap-4 items-start">
+                    <div class="step-number">1</div>
+                    <div>
+                        <h3 class="text-xl font-semibold mb-2">Download & Install</h3>
+                        <p class="text-gray-400">Click the download button above. Run SnapTable.exe - no installation required!</p>
+                    </div>
+                </div>
+
+                <!-- Step 2 -->
+                <div class="flex gap-4 items-start">
+                    <div class="step-number">2</div>
+                    <div>
+                        <h3 class="text-xl font-semibold mb-2">Login with Your Email</h3>
+                        <p class="text-gray-400">
+                            When SnapTable opens, login with the email you used to subscribe.<br>
+                            <strong>Email:</strong> <span id="loginEmail" class="text-purple-400">Loading...</span>
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Step 3 -->
+                <div class="flex gap-4 items-start">
+                    <div class="step-number">3</div>
+                    <div>
+                        <h3 class="text-xl font-semibold mb-2">Start Capturing!</h3>
+                        <p class="text-gray-400">Use Middle Mouse Button or Double Right-Click to capture any table. Data is instantly copied to your clipboard!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- What You Get -->
+        <div class="glass rounded-2xl p-8 mb-8">
+            <h2 class="text-2xl font-bold mb-6">What's Included in Your Subscription</h2>
+
+            <div class="grid md:grid-cols-2 gap-4">
+                <div class="flex items-start gap-3">
+                    <span class="text-green-400 text-xl">✓</span>
+                    <span>Unlimited table captures</span>
+                </div>
+                <div class="flex items-start gap-3">
+                    <span class="text-green-400 text-xl">✓</span>
+                    <span>Multi-monitor support</span>
+                </div>
+                <div class="flex items-start gap-3">
+                    <span class="text-green-400 text-xl">✓</span>
+                    <span>Zero-storage security</span>
+                </div>
+                <div class="flex items-start gap-3">
+                    <span class="text-green-400 text-xl">✓</span>
+                    <span>HIPAA compliant</span>
+                </div>
+                <div class="flex items-start gap-3">
+                    <span class="text-green-400 text-xl">✓</span>
+                    <span>Bank-level encryption</span>
+                </div>
+                <div class="flex items-start gap-3">
+                    <span class="text-green-400 text-xl">✓</span>
+                    <span>Automatic updates</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Trial Information -->
+        <div class="glass rounded-2xl p-8 mb-8">
+            <h2 class="text-2xl font-bold mb-4">About Your Trial</h2>
+
+            <div class="space-y-3 text-gray-300">
+                <p><strong>Trial Period:</strong> 7 days from today</p>
+                <p><strong>First Charge:</strong> <span id="chargeDate">7 days from now</span></p>
+                <p><strong>Billing:</strong> Monthly subscription (cancel anytime)</p>
+                <p><strong>Support:</strong> Email us at <a href="mailto:info@snaptable.app" class="text-purple-400 hover:underline">info@snaptable.app</a></p>
+            </div>
+
+            <div class="mt-6 p-4 bg-yellow-900/20 border border-yellow-700/50 rounded-lg">
+                <p class="text-yellow-200 text-sm">
+                    <strong>💡 Reminder:</strong> You won't be charged during your 7-day trial. Cancel anytime before trial ends to pay nothing.
+                </p>
+            </div>
+        </div>
+
+        <!-- Need Help -->
+        <div class="text-center text-gray-400">
+            <p class="mb-4">📧 Need help? <a href="mailto:info@snaptable.app" class="text-purple-400 hover:underline">Contact Support</a></p>
+            <p><a href="index.html" class="text-purple-400 hover:underline">← Back to Home</a></p>
+        </div>
+    </div>
+
+    <script>
+        // API Configuration
+        const API_BASE_URL = 'https://YOUR-API-GATEWAY-URL'; // TODO: Replace with your actual API URL
+
+        // Check if user is logged in
+        const token = localStorage.getItem('auth_token') || sessionStorage.getItem('auth_token');
+        const user = JSON.parse(localStorage.getItem('user') || sessionStorage.getItem('user') || '{}');
+
+        // Update UI with user info
+        function updateUI() {
+            if (user && user.email) {
+                // Show personalized welcome
+                document.getElementById('welcomeText').textContent =
+                    `Your ${user.plan_type || 'subscription'} is ready!`;
+
+                // Show user info
+                document.getElementById('userEmail').textContent = user.email;
+                document.getElementById('userPlan').textContent = (user.plan_type || 'N/A').toUpperCase();
+                document.getElementById('subscriptionStatus').textContent = user.subscription_status || 'active';
+                document.getElementById('userInfo').style.display = 'block';
+
+                // Show email in login step
+                document.getElementById('loginEmail').textContent = user.email;
+
+            } else {
+                // No user info - show generic message
+                document.getElementById('welcomeText').textContent =
+                    'Thank you for subscribing!';
+                document.getElementById('loginEmail').textContent = 'the email you used to subscribe';
+            }
+        }
+
+        // Calculate charge date (7 days from now)
+        function setChargeDate() {
+            const chargeDate = new Date();
+            chargeDate.setDate(chargeDate.getDate() + 7);
+            document.getElementById('chargeDate').textContent = chargeDate.toLocaleDateString('en-US', {
+                month: 'long',
+                day: 'numeric',
+                year: 'numeric'
+            });
+        }
+
+        // Validate token if present
+        async function validateToken() {
+            if (!token) {
+                updateUI();
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/auth/validate`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.valid && data.user) {
+                        // Update stored user info
+                        const storage = localStorage.getItem('auth_token') ? localStorage : sessionStorage;
+                        storage.setItem('user', JSON.stringify(data.user));
+
+                        // Update UI
+                        Object.assign(user, data.user);
+                        updateUI();
+                    }
+                } else {
+                    // Token invalid, clear storage
+                    localStorage.removeItem('auth_token');
+                    localStorage.removeItem('user');
+                    sessionStorage.removeItem('auth_token');
+                    sessionStorage.removeItem('user');
+                    updateUI();
+                }
+            } catch (error) {
+                console.error('Token validation error:', error);
+                updateUI();
+            }
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            validateToken();
+            setChargeDate();
+        });
+    </script>
+</body>
+</html>
