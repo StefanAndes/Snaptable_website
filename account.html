@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Account - SnapTable</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background: linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 100%);
+            color: white;
+            min-height: 100vh;
+        }
+        .glass {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 0.75rem 2rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(139, 92, 246, 0.3);
+        }
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 0.75rem 2rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            transition: all 0.3s;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+        .stat-card {
+            background: rgba(139, 92, 246, 0.1);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+        }
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+        .badge-free {
+            background: rgba(156, 163, 175, 0.2);
+            color: #d1d5db;
+        }
+        .badge-active {
+            background: rgba(34, 197, 94, 0.2);
+            color: #86efac;
+        }
+        .badge-inactive {
+            background: rgba(239, 68, 68, 0.2);
+            color: #fca5a5;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mx-auto px-4 py-8 max-w-4xl">
+        <!-- Header -->
+        <div class="flex justify-between items-center mb-8">
+            <div>
+                <h1 class="text-3xl font-bold mb-2">My Account</h1>
+                <p class="text-gray-400">Manage your SnapTable account</p>
+            </div>
+            <button onclick="logout()" class="btn-secondary">Logout</button>
+        </div>
+
+        <!-- User Info Card -->
+        <div class="glass rounded-xl p-6 mb-6">
+            <h2 class="text-xl font-semibold mb-4">Account Information</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <p class="text-gray-400 text-sm mb-1">Email</p>
+                    <p class="text-lg" id="userEmail">-</p>
+                </div>
+                <div>
+                    <p class="text-gray-400 text-sm mb-1">Full Name</p>
+                    <p class="text-lg" id="userName">-</p>
+                </div>
+                <div>
+                    <p class="text-gray-400 text-sm mb-1">Plan</p>
+                    <p class="text-lg"><span id="userPlan" class="badge badge-free">Free</span></p>
+                </div>
+                <div>
+                    <p class="text-gray-400 text-sm mb-1">Status</p>
+                    <p class="text-lg"><span id="userStatus" class="badge badge-inactive">Inactive</span></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Download Section -->
+        <div class="glass rounded-xl p-6 mb-6">
+            <h2 class="text-xl font-semibold mb-4">Desktop Application</h2>
+            <p class="text-gray-300 mb-4">Download and install the SnapTable desktop app to start capturing tables.</p>
+            <div class="flex gap-4">
+                <a href="download.html" class="btn-primary inline-block">Download for Windows</a>
+                <a href="#" onclick="copyToken(); return false;" class="btn-secondary">Copy Auth Token</a>
+            </div>
+            <p class="text-sm text-gray-400 mt-4">Your auth token is automatically saved when you login. Use "Copy Auth Token" if you need to manually configure the desktop app.</p>
+        </div>
+
+        <!-- Quick Stats (placeholder for future) -->
+        <div class="glass rounded-xl p-6">
+            <h2 class="text-xl font-semibold mb-4">Usage Statistics</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="stat-card">
+                    <p class="text-gray-400 text-sm mb-1">Total Captures</p>
+                    <p class="text-3xl font-bold">0</p>
+                </div>
+                <div class="stat-card">
+                    <p class="text-gray-400 text-sm mb-1">This Month</p>
+                    <p class="text-3xl font-bold">0</p>
+                </div>
+                <div class="stat-card">
+                    <p class="text-gray-400 text-sm mb-1">Last Capture</p>
+                    <p class="text-lg font-semibold">Never</p>
+                </div>
+            </div>
+            <p class="text-sm text-gray-400 mt-4">Usage tracking coming soon!</p>
+        </div>
+
+        <!-- Footer Links -->
+        <div class="mt-8 text-center text-gray-400">
+            <a href="index.html" class="hover:text-white transition">Home</a>
+            <span class="mx-2">•</span>
+            <a href="#" class="hover:text-white transition">Support</a>
+            <span class="mx-2">•</span>
+            <a href="#" class="hover:text-white transition">Privacy</a>
+        </div>
+    </div>
+
+    <script>
+        // API Configuration
+        const API_BASE_URL = 'https://q7rndxte5d.execute-api.us-east-1.amazonaws.com/default/snaptable-api';
+
+        // Check authentication on page load
+        window.addEventListener('DOMContentLoaded', () => {
+            checkAuth();
+            loadUserData();
+        });
+
+        function checkAuth() {
+            const token = localStorage.getItem('auth_token') || sessionStorage.getItem('auth_token');
+            if (!token) {
+                // Not logged in, redirect to login
+                window.location.href = 'login.html';
+                return;
+            }
+        }
+
+        function loadUserData() {
+            const userStr = localStorage.getItem('user') || sessionStorage.getItem('user');
+            if (!userStr) {
+                console.error('No user data found');
+                return;
+            }
+
+            try {
+                const user = JSON.parse(userStr);
+
+                // Update UI with user data
+                document.getElementById('userEmail').textContent = user.email || '-';
+                document.getElementById('userName').textContent = user.full_name || 'Not set';
+
+                // Update plan badge
+                const planBadge = document.getElementById('userPlan');
+                const planType = (user.plan_type || 'free').toLowerCase();
+                planBadge.textContent = planType.charAt(0).toUpperCase() + planType.slice(1);
+                planBadge.className = 'badge ' + (planType === 'free' ? 'badge-free' : 'badge-active');
+
+                // Update status badge
+                const statusBadge = document.getElementById('userStatus');
+                const status = (user.subscription_status || 'inactive').toLowerCase();
+                statusBadge.textContent = status.charAt(0).toUpperCase() + status.slice(1);
+                statusBadge.className = 'badge ' + (status === 'active' || status === 'trialing' ? 'badge-active' : 'badge-inactive');
+
+            } catch (error) {
+                console.error('Error loading user data:', error);
+            }
+        }
+
+        function copyToken() {
+            const token = localStorage.getItem('auth_token') || sessionStorage.getItem('auth_token');
+            if (!token) {
+                alert('No auth token found. Please login again.');
+                return;
+            }
+
+            // Copy to clipboard
+            navigator.clipboard.writeText(token).then(() => {
+                alert('Auth token copied to clipboard!');
+            }).catch(err => {
+                console.error('Failed to copy:', err);
+                // Fallback method
+                const textarea = document.createElement('textarea');
+                textarea.value = token;
+                document.body.appendChild(textarea);
+                textarea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textarea);
+                alert('Auth token copied to clipboard!');
+            });
+        }
+
+        function logout() {
+            // Clear all auth data
+            localStorage.removeItem('auth_token');
+            localStorage.removeItem('user');
+            sessionStorage.removeItem('auth_token');
+            sessionStorage.removeItem('user');
+
+            // Redirect to home
+            window.location.href = 'index.html';
+        }
+    </script>
+</body>
+</html>

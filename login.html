@@ -146,7 +146,7 @@
 
     <script>
         // API Configuration
-        const API_BASE_URL = 'https://YOUR-API-GATEWAY-URL'; // TODO: Replace with your actual API URL
+        const API_BASE_URL = 'https://q7rndxte5d.execute-api.us-east-1.amazonaws.com/default/snaptable-api';
 
         // Get form elements
         const loginForm = document.getElementById('loginForm');
@@ -198,9 +198,9 @@
                     // Show success
                     showSuccess('Login successful! Redirecting...');
 
-                    // Redirect to download page after 1 second
+                    // Redirect to account page after 1 second
                     setTimeout(() => {
-                        window.location.href = 'download.html';
+                        window.location.href = 'account.html';
                     }, 1000);
 
                 } else {
@@ -246,8 +246,8 @@
                 .then(res => res.json())
                 .then(data => {
                     if (data.valid) {
-                        // Already logged in, redirect to download
-                        window.location.href = 'download.html';
+                        // Already logged in, redirect to account
+                        window.location.href = 'account.html';
                     }
                 })
                 .catch(err => console.error('Token validation error:', err));
