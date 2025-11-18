@@ -99,6 +99,66 @@
             </div>
         </div>
 
+        <!-- Subscription Management Section -->
+        <div class="glass rounded-xl p-6 mb-6" id="subscriptionSection">
+            <h2 class="text-xl font-semibold mb-4">Subscription</h2>
+
+            <!-- Free Plan CTA -->
+            <div id="freePlanCTA" class="hidden">
+                <p class="text-gray-300 mb-4">Unlock unlimited table captures and advanced features with a SnapTable subscription.</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                    <div class="stat-card">
+                        <h3 class="text-lg font-semibold mb-2">Starter Plan</h3>
+                        <p class="text-3xl font-bold mb-2">$4.99<span class="text-lg text-gray-400">/mo</span></p>
+                        <ul class="text-sm text-gray-300 mb-4 space-y-1">
+                            <li>• 500 captures/month</li>
+                            <li>• All table formats</li>
+                            <li>• Email support</li>
+                        </ul>
+                        <a href="https://buy.stripe.com/test_9AQdUO3lz2Gp9gccMN" class="btn-primary inline-block text-center w-full">Start Free Trial</a>
+                    </div>
+                    <div class="stat-card">
+                        <h3 class="text-lg font-semibold mb-2">Pro Plan</h3>
+                        <p class="text-3xl font-bold mb-2">$11.99<span class="text-lg text-gray-400">/mo</span></p>
+                        <ul class="text-sm text-gray-300 mb-4 space-y-1">
+                            <li>• Unlimited captures</li>
+                            <li>• Priority support</li>
+                            <li>• Advanced features</li>
+                        </ul>
+                        <a href="https://buy.stripe.com/test_9AQbMG6xL7026Y04gi" class="btn-primary inline-block text-center w-full">Start Free Trial</a>
+                    </div>
+                </div>
+                <p class="text-sm text-gray-400">All plans include a 7-day free trial. Cancel anytime.</p>
+            </div>
+
+            <!-- Active Subscription Info -->
+            <div id="activeSubscriptionInfo" class="hidden">
+                <div class="mb-4">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="text-gray-400">Current Plan:</span>
+                        <span class="font-semibold text-lg" id="currentPlanName">-</span>
+                    </div>
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="text-gray-400">Status:</span>
+                        <span id="currentPlanStatus" class="badge badge-active">Active</span>
+                    </div>
+                    <div class="flex justify-between items-center" id="trialInfoRow" style="display: none;">
+                        <span class="text-gray-400">Trial ends:</span>
+                        <span id="trialEndDate" class="text-gray-300">-</span>
+                    </div>
+                </div>
+
+                <div class="flex gap-4">
+                    <button onclick="manageSubscription()" class="btn-secondary">Manage Billing</button>
+                    <button onclick="upgradeSubscription()" class="btn-primary" id="upgradeBtn" style="display: none;">Upgrade to Pro</button>
+                </div>
+
+                <p class="text-sm text-gray-400 mt-4">
+                    Manage your subscription, update payment method, or view billing history.
+                </p>
+            </div>
+        </div>
+
         <!-- Download Section -->
         <div class="glass rounded-xl p-6 mb-6">
             <h2 class="text-xl font-semibold mb-4">Desktop Application</h2>
@@ -185,9 +245,89 @@
                 statusBadge.textContent = status.charAt(0).toUpperCase() + status.slice(1);
                 statusBadge.className = 'badge ' + (status === 'active' || status === 'trialing' ? 'badge-active' : 'badge-inactive');
 
+                // Update subscription section
+                updateSubscriptionSection(user);
+
             } catch (error) {
                 console.error('Error loading user data:', error);
             }
+        }
+
+        function updateSubscriptionSection(user) {
+            const planType = (user.plan_type || 'free').toLowerCase();
+            const status = (user.subscription_status || 'inactive').toLowerCase();
+
+            const freePlanCTA = document.getElementById('freePlanCTA');
+            const activeSubscriptionInfo = document.getElementById('activeSubscriptionInfo');
+
+            if (planType === 'free' || status === 'inactive') {
+                // Show upgrade options
+                freePlanCTA.classList.remove('hidden');
+                activeSubscriptionInfo.classList.add('hidden');
+            } else {
+                // Show active subscription info
+                freePlanCTA.classList.add('hidden');
+                activeSubscriptionInfo.classList.remove('hidden');
+
+                // Update plan name
+                document.getElementById('currentPlanName').textContent =
+                    planType.charAt(0).toUpperCase() + planType.slice(1) + ' Plan';
+
+                // Update status badge
+                const statusBadge = document.getElementById('currentPlanStatus');
+                statusBadge.textContent = status.charAt(0).toUpperCase() + status.slice(1);
+                statusBadge.className = 'badge ' + (status === 'active' || status === 'trialing' ? 'badge-active' : 'badge-inactive');
+
+                // Show trial info if trialing
+                if (status === 'trialing') {
+                    const trialInfoRow = document.getElementById('trialInfoRow');
+                    trialInfoRow.style.display = 'flex';
+                    // TODO: Show actual trial end date from subscription data
+                    document.getElementById('trialEndDate').textContent = '7 days remaining';
+                }
+
+                // Show upgrade button if on Starter plan
+                if (planType === 'starter') {
+                    document.getElementById('upgradeBtn').style.display = 'inline-block';
+                }
+            }
+        }
+
+        function manageSubscription() {
+            // Create a Stripe billing portal session
+            const token = localStorage.getItem('auth_token') || sessionStorage.getItem('auth_token');
+            if (!token) {
+                alert('Please login again');
+                window.location.href = 'login.html';
+                return;
+            }
+
+            // Call API to create billing portal session
+            fetch(`${API_BASE_URL}/stripe/create-portal-session`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.url) {
+                    // Redirect to Stripe billing portal
+                    window.location.href = data.url;
+                } else {
+                    alert('Error creating billing portal session');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error creating billing portal session');
+            });
+        }
+
+        function upgradeSubscription() {
+            // Redirect to Pro plan checkout
+            window.location.href = 'https://buy.stripe.com/test_9AQbMG6xL7026Y04gi';
         }
 
         function copyToken() {
