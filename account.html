@@ -105,27 +105,29 @@
 
             <!-- Free Plan CTA -->
             <div id="freePlanCTA" class="hidden">
-                <p class="text-gray-300 mb-4">Unlock unlimited table captures and advanced features with a SnapTable subscription.</p>
+                <p class="text-gray-300 mb-4">Upgrade to extract more tables with a SnapTable subscription.</p>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                     <div class="stat-card">
-                        <h3 class="text-lg font-semibold mb-2">Starter Plan</h3>
+                        <h3 class="text-lg font-semibold mb-2">Starter</h3>
                         <p class="text-3xl font-bold mb-2">$4.99<span class="text-lg text-gray-400">/mo</span></p>
                         <ul class="text-sm text-gray-300 mb-4 space-y-1">
-                            <li>• 500 captures/month</li>
-                            <li>• All table formats</li>
-                            <li>• Email support</li>
+                            <li>• 750 captures/month</li>
+                            <li>• ~25 captures per day</li>
+                            <li>• All extraction features</li>
+                            <li>• Cancel anytime</li>
                         </ul>
-                        <a href="https://buy.stripe.com/test_9AQdUO3lz2Gp9gccMN" class="btn-primary inline-block text-center w-full">Start Free Trial</a>
+                        <a href="https://buy.stripe.com/bJeaEZ83B7AC26Y0p28k803" class="btn-primary inline-block text-center w-full">Start 7-Day Free Trial</a>
                     </div>
                     <div class="stat-card">
-                        <h3 class="text-lg font-semibold mb-2">Pro Plan</h3>
+                        <h3 class="text-lg font-semibold mb-2">Pro</h3>
                         <p class="text-3xl font-bold mb-2">$11.99<span class="text-lg text-gray-400">/mo</span></p>
                         <ul class="text-sm text-gray-300 mb-4 space-y-1">
-                            <li>• Unlimited captures</li>
-                            <li>• Priority support</li>
-                            <li>• Advanced features</li>
+                            <li>• 2,000 captures/month</li>
+                            <li>• ~67 captures per day</li>
+                            <li>• All extraction features</li>
+                            <li>• Cancel anytime</li>
                         </ul>
-                        <a href="https://buy.stripe.com/test_9AQbMG6xL7026Y04gi" class="btn-primary inline-block text-center w-full">Start Free Trial</a>
+                        <a href="https://buy.stripe.com/4gM3cxdnV9IKbHyb3G8k802" class="btn-primary inline-block text-center w-full">Start 7-Day Free Trial</a>
                     </div>
                 </div>
                 <p class="text-sm text-gray-400">All plans include a 7-day free trial. Cancel anytime.</p>
@@ -163,11 +165,8 @@
         <div class="glass rounded-xl p-6 mb-6">
             <h2 class="text-xl font-semibold mb-4">Desktop Application</h2>
             <p class="text-gray-300 mb-4">Download and install the SnapTable desktop app to start capturing tables.</p>
-            <div class="flex gap-4">
-                <a href="download.html" class="btn-primary inline-block">Download for Windows</a>
-                <a href="#" onclick="copyToken(); return false;" class="btn-secondary">Copy Auth Token</a>
-            </div>
-            <p class="text-sm text-gray-400 mt-4">Your auth token is automatically saved when you login. Use "Copy Auth Token" if you need to manually configure the desktop app.</p>
+            <a href="download.html" class="btn-primary inline-block">Download for Windows</a>
+            <p class="text-sm text-gray-400 mt-4">The desktop app will automatically connect using your login credentials.</p>
         </div>
 
         <!-- Quick Stats (placeholder for future) -->
@@ -327,7 +326,7 @@
 
         function upgradeSubscription() {
             // Redirect to Pro plan checkout
-            window.location.href = 'https://buy.stripe.com/test_9AQbMG6xL7026Y04gi';
+            window.location.href = 'https://buy.stripe.com/4gM3cxdnV9IKbHyb3G8k802';
         }
 
         function copyToken() {
