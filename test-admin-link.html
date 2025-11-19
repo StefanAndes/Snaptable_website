@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Admin Link - SnapTable</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+        .test-section {
+            background: #f5f5f5;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-left: 4px solid #667eea;
+        }
+        .btn {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 5px;
+            text-decoration: none;
+            margin: 10px 5px;
+            cursor: pointer;
+            border: none;
+            font-size: 16px;
+        }
+        .btn:hover {
+            background: #5568d3;
+        }
+        .success {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        .info {
+            background: #d1ecf1;
+            border: 1px solid #bee5eb;
+            color: #0c5460;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        code {
+            background: #f5f5f5;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: monospace;
+            color: #e83e8c;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔗 Test Admin Dashboard Link</h1>
+
+        <div class="info">
+            <strong>Purpose:</strong> This page tests if the admin.html link works and helps diagnose browser caching issues.
+        </div>
+
+        <div class="test-section">
+            <h2>Test 1: Direct Link</h2>
+            <p>Click this button to go directly to admin.html:</p>
+            <a href="admin.html" class="btn">Go to Admin Dashboard</a>
+            <p style="margin-top: 15px; color: #666;">
+                If this works, the admin.html page is deployed correctly.
+            </p>
+        </div>
+
+        <div class="test-section">
+            <h2>Test 2: Absolute URL</h2>
+            <p>Click this button using the full URL:</p>
+            <a href="https://snaptable.app/admin.html" class="btn">Go to Admin (Full URL)</a>
+            <p style="margin-top: 15px; color: #666;">
+                This bypasses any relative path issues.
+            </p>
+        </div>
+
+        <div class="test-section">
+            <h2>Test 3: JavaScript Navigation</h2>
+            <p>Click this button that uses JavaScript to navigate:</p>
+            <button class="btn" onclick="window.location.href='admin.html'">Go to Admin (JS)</button>
+            <p style="margin-top: 15px; color: #666;">
+                This tests if JavaScript navigation works.
+            </p>
+        </div>
+
+        <div class="test-section">
+            <h2>Test 4: New Tab</h2>
+            <p>Open admin dashboard in a new tab:</p>
+            <a href="admin.html" target="_blank" class="btn">Open Admin in New Tab</a>
+            <p style="margin-top: 15px; color: #666;">
+                This tests if the page loads in a fresh context.
+            </p>
+        </div>
+
+        <div class="success">
+            <strong>✓ Cache Clearing Instructions:</strong><br><br>
+            If any of these links work but the button on account.html doesn't:<br>
+            1. Press <code>Ctrl + Shift + R</code> on account.html to hard refresh<br>
+            2. Or clear browser cache for snaptable.app<br>
+            3. Or try in a private/incognito window
+        </div>
+
+        <div class="test-section">
+            <h2>Debug Info</h2>
+            <p><strong>Current URL:</strong> <code id="currentUrl"></code></p>
+            <p><strong>Admin URL:</strong> <code>https://snaptable.app/admin.html</code></p>
+            <p><strong>Time:</strong> <code id="currentTime"></code></p>
+        </div>
+
+        <div style="margin-top: 30px; padding-top: 20px; border-top: 2px solid #eee;">
+            <a href="account.html" style="color: #667eea; text-decoration: none;">← Back to Account Page</a>
+        </div>
+    </div>
+
+    <script>
+        // Show current URL and time
+        document.getElementById('currentUrl').textContent = window.location.href;
+        document.getElementById('currentTime').textContent = new Date().toLocaleString();
+    </script>
+</body>
+</html>
