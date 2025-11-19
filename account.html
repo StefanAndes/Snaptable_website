@@ -102,6 +102,34 @@
             </div>
         </div>
 
+        <!-- Usage Statistics Section -->
+        <div class="glass rounded-xl p-6 mb-6">
+            <h2 class="text-xl font-semibold mb-4">Usage This Month</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="stat-card">
+                    <p class="text-gray-400 text-sm mb-1">Captures Used</p>
+                    <p class="text-3xl font-bold"><span id="usageCount">-</span><span class="text-lg text-gray-400">/<span id="usageLimit">-</span></span></p>
+                </div>
+                <div class="stat-card">
+                    <p class="text-gray-400 text-sm mb-1">Remaining</p>
+                    <p class="text-3xl font-bold" id="usageRemaining">-</p>
+                </div>
+                <div class="stat-card">
+                    <p class="text-gray-400 text-sm mb-1">Last Capture</p>
+                    <p class="text-lg font-semibold" id="lastCapture">Never</p>
+                </div>
+            </div>
+            <div class="mt-4">
+                <div class="flex justify-between text-sm text-gray-400 mb-2">
+                    <span>Usage</span>
+                    <span><span id="usagePercent">0</span>%</span>
+                </div>
+                <div class="bg-gray-700 rounded-full h-2">
+                    <div id="usageBar" class="bg-gradient-to-r from-purple-500 to-pink-500 rounded-full h-2" style="width: 0%"></div>
+                </div>
+            </div>
+        </div>
+
         <!-- Subscription Management Section -->
         <div class="glass rounded-xl p-6 mb-6" id="subscriptionSection">
             <h2 class="text-xl font-semibold mb-4">Subscription</h2>
@@ -204,12 +232,13 @@
 
     <script>
         // API Configuration
-        const API_BASE_URL = 'https://2qrovdo4oa.execute-api.us-east-1.amazonaws.com/prod';
+        const API_BASE_URL = 'https://f7otmeecqdf3ylgq4lddth7h4u0bnuxe.lambda-url.us-east-1.on.aws';
 
         // Check authentication on page load
         window.addEventListener('DOMContentLoaded', () => {
             checkAuth();
             loadUserData();
+            loadUsageStats();
         });
 
         function checkAuth() {
@@ -358,6 +387,86 @@
                 document.body.removeChild(textarea);
                 alert('Auth token copied to clipboard!');
             });
+        }
+
+        async function loadUsageStats() {
+            const token = localStorage.getItem('auth_token') || sessionStorage.getItem('auth_token');
+            if (!token) return;
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/usage/stats?days=30`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (!response.ok) {
+                    console.error('Failed to load usage stats');
+                    return;
+                }
+
+                const data = await response.json();
+                const stats = data.stats;
+
+                // Plan limits
+                const planLimits = {
+                    'free': 10,
+                    'starter': 750,
+                    'pro': 2000,
+                    'enterprise': 999999
+                };
+
+                const user = JSON.parse(localStorage.getItem('user') || sessionStorage.getItem('user'));
+                const planType = user?.plan_type || 'free';
+                const limit = planLimits[planType];
+                const used = stats.total_captures;
+                const remaining = Math.max(0, limit - used);
+                const percent = Math.min(100, Math.round((used / limit) * 100));
+
+                // Update UI
+                document.getElementById('usageCount').textContent = used;
+                document.getElementById('usageLimit').textContent = limit;
+                document.getElementById('usageRemaining').textContent = remaining;
+                document.getElementById('usagePercent').textContent = percent;
+                document.getElementById('usageBar').style.width = `${percent}%`;
+
+                // Last capture
+                if (stats.last_capture) {
+                    const lastDate = new Date(stats.last_capture);
+                    const now = new Date();
+                    const diffMs = now - lastDate;
+                    const diffMins = Math.floor(diffMs / 60000);
+                    const diffHours = Math.floor(diffMins / 60);
+                    const diffDays = Math.floor(diffHours / 24);
+
+                    let lastCaptureText;
+                    if (diffMins < 1) {
+                        lastCaptureText = 'Just now';
+                    } else if (diffMins < 60) {
+                        lastCaptureText = `${diffMins}m ago`;
+                    } else if (diffHours < 24) {
+                        lastCaptureText = `${diffHours}h ago`;
+                    } else {
+                        lastCaptureText = `${diffDays}d ago`;
+                    }
+                    document.getElementById('lastCapture').textContent = lastCaptureText;
+                } else {
+                    document.getElementById('lastCapture').textContent = 'Never';
+                }
+
+                // Change progress bar color if near limit
+                const bar = document.getElementById('usageBar');
+                if (percent >= 90) {
+                    bar.className = 'bg-gradient-to-r from-red-500 to-orange-500 rounded-full h-2';
+                } else if (percent >= 75) {
+                    bar.className = 'bg-gradient-to-r from-yellow-500 to-orange-500 rounded-full h-2';
+                } else {
+                    bar.className = 'bg-gradient-to-r from-purple-500 to-pink-500 rounded-full h-2';
+                }
+
+            } catch (error) {
+                console.error('Error loading usage stats:', error);
+            }
         }
 
         function logout() {
