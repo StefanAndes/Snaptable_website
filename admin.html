@@ -512,7 +512,12 @@
                     body: JSON.stringify(updates)
                 });
 
-                if (!response.ok) throw new Error('Failed to update user');
+                const data = await response.json();
+
+                if (!response.ok) {
+                    alert(data.error || 'Failed to update user');
+                    return;
+                }
 
                 alert('User updated successfully!');
                 closeUserModal();
@@ -520,7 +525,7 @@
                 loadStats();
             } catch (error) {
                 console.error('Error updating user:', error);
-                alert('Error updating user');
+                alert(`Error: ${error.message}`);
             }
         }
 
