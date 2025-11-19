@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Check Admin Status</title>
+    <style>
+        body {
+            font-family: monospace;
+            padding: 20px;
+            background: #1a1a1a;
+            color: #fff;
+        }
+        pre {
+            background: #2a2a2a;
+            padding: 20px;
+            border-radius: 5px;
+            overflow: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>Admin Status Check</h1>
+    <div id="output"></div>
+
+    <script>
+        const output = document.getElementById('output');
+
+        // Check localStorage
+        const user = localStorage.getItem('user');
+        const token = localStorage.getItem('auth_token');
+
+        if (!user || !token) {
+            output.innerHTML = '<p style="color: red;">Not logged in. Please <a href="login.html" style="color: #4a9eff;">login first</a></p>';
+        } else {
+            const userData = JSON.parse(user);
+            output.innerHTML = `
+                <h2>User Data from localStorage:</h2>
+                <pre>${JSON.stringify(userData, null, 2)}</pre>
+
+                <h2>Is Admin?</h2>
+                <pre style="color: ${userData.is_admin ? '#4ade80' : '#f87171'}; font-size: 24px;">
+                    ${userData.is_admin === true ? '✓ YES - You are an admin!' : '✗ NO - is_admin field is: ' + userData.is_admin}
+                </pre>
+
+                <h2>What this means:</h2>
+                <ul>
+                    ${userData.is_admin === true
+                        ? '<li style="color: #4ade80;">The Lambda IS returning is_admin correctly</li><li>The account page should show the Admin Dashboard button</li><li>If you don\'t see it, try hard refresh (Ctrl+Shift+R) on account.html</li>'
+                        : '<li style="color: #f87171;">The Lambda is NOT returning is_admin field</li><li>Lambda deployment may not be complete yet</li><li>Try logging out and logging in again in 1-2 minutes</li>'
+                    }
+                </ul>
+            `;
+        }
+    </script>
+</body>
+</html>
