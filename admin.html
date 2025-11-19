@@ -288,7 +288,7 @@
         const API_BASE_URL = 'https://2qrovdo4oa.execute-api.us-east-1.amazonaws.com/prod';
         let currentPage = 1;
         let currentTab = 'users';
-        let authToken = localStorage.getItem('authToken');
+        let authToken = localStorage.getItem('auth_token');
 
         // Check if user is logged in and is admin
         if (!authToken) {
@@ -606,7 +606,8 @@
         }
 
         function logout() {
-            localStorage.removeItem('authToken');
+            localStorage.removeItem('auth_token');
+            localStorage.removeItem('user');
             window.location.href = '/login.html';
         }
 
