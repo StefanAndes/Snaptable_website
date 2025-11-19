@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SnapTable Corporate Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .header h1 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .logout-btn {
+            float: right;
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.2s;
+        }
+
+        .logout-btn:hover {
+            background: #5568d3;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-card h3 {
+            color: #666;
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .stat-value {
+            font-size: 36px;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 13px;
+            color: #999;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #f0f0f0;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 15px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.3s ease;
+        }
+
+        .usage-chart {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .usage-chart h2 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 20px;
+        }
+
+        .chart-placeholder {
+            height: 300px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #999;
+            font-size: 14px;
+        }
+
+        .account-info {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .account-info h2 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 20px;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 15px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .info-row:last-child {
+            border-bottom: none;
+        }
+
+        .info-label {
+            color: #666;
+            font-weight: 500;
+        }
+
+        .info-value {
+            color: #333;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-active {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-trial {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: white;
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <button class="logout-btn" onclick="logout()">Logout</button>
+            <h1>Corporate Dashboard</h1>
+            <p id="org-name">Loading...</p>
+        </div>
+
+        <div id="error-container"></div>
+        <div id="loading" class="loading">Loading dashboard...</div>
+
+        <div id="dashboard" style="display: none;">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <h3>Usage This Month</h3>
+                    <div class="stat-value" id="usage-count">0</div>
+                    <div class="stat-label">API calls / captures</div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="usage-progress" style="width: 0%"></div>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <h3>Plan Limit</h3>
+                    <div class="stat-value" id="plan-limit">∞</div>
+                    <div class="stat-label">Total allowed per month</div>
+                </div>
+
+                <div class="stat-card">
+                    <h3>Remaining</h3>
+                    <div class="stat-value" id="remaining-usage">∞</div>
+                    <div class="stat-label">Calls remaining</div>
+                </div>
+
+                <div class="stat-card">
+                    <h3>Reset Date</h3>
+                    <div class="stat-value" id="reset-days">--</div>
+                    <div class="stat-label">Days until monthly reset</div>
+                </div>
+            </div>
+
+            <div class="usage-chart">
+                <h2>Usage History (Last 30 Days)</h2>
+                <div class="chart-placeholder">
+                    Usage chart coming soon - integrate Chart.js for visualization
+                </div>
+            </div>
+
+            <div class="account-info">
+                <h2>Account Information</h2>
+                <div class="info-row">
+                    <span class="info-label">Organization</span>
+                    <span class="info-value" id="org-name-detail">--</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Plan Type</span>
+                    <span class="info-value" id="plan-type">--</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Subscription Status</span>
+                    <span class="info-value" id="subscription-status">--</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Account Created</span>
+                    <span class="info-value" id="created-date">--</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE_URL = 'https://9prphetq81.execute-api.us-east-1.amazonaws.com/prod';
+
+        function getAuthToken() {
+            return localStorage.getItem('auth_token');
+        }
+
+        function logout() {
+            localStorage.removeItem('auth_token');
+            window.location.href = 'https://snaptable.com/login.html';
+        }
+
+        function showError(message) {
+            const errorContainer = document.getElementById('error-container');
+            errorContainer.innerHTML = `<div class="error">${message}</div>`;
+        }
+
+        function formatDate(dateString) {
+            if (!dateString) return '--';
+            const date = new Date(dateString);
+            return date.toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+        }
+
+        function calculateDaysUntilReset() {
+            const now = new Date();
+            const nextMonth = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+            const diffTime = nextMonth - now;
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            return diffDays;
+        }
+
+        async function loadDashboard() {
+            const token = getAuthToken();
+
+            if (!token) {
+                window.location.href = 'https://snaptable.com/login.html';
+                return;
+            }
+
+            try {
+                // Fetch organization info and usage stats
+                const [orgResponse, usageResponse] = await Promise.all([
+                    fetch(`${API_BASE_URL}/api/org/info`, {
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Content-Type': 'application/json'
+                        }
+                    }),
+                    fetch(`${API_BASE_URL}/api/usage/stats`, {
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                ]);
+
+                if (!orgResponse.ok) {
+                    throw new Error('Failed to load organization info');
+                }
+
+                const orgData = await orgResponse.json();
+                const usageData = usageResponse.ok ? await usageResponse.json() : { count: 0 };
+
+                // Update UI
+                document.getElementById('org-name').textContent = orgData.organization_name || 'Corporate Account';
+                document.getElementById('org-name-detail').textContent = orgData.organization_name || '--';
+                document.getElementById('plan-type').textContent = orgData.plan_type || 'Enterprise';
+
+                const statusBadge = document.getElementById('subscription-status');
+                const status = orgData.subscription_status || 'active';
+                statusBadge.innerHTML = `<span class="status-badge status-${status}">${status.toUpperCase()}</span>`;
+
+                document.getElementById('created-date').textContent = formatDate(orgData.created_at);
+
+                // Usage stats
+                const usageCount = usageData.count || 0;
+                const planLimit = orgData.license_limit || null;
+
+                document.getElementById('usage-count').textContent = usageCount.toLocaleString();
+
+                if (planLimit) {
+                    document.getElementById('plan-limit').textContent = planLimit.toLocaleString();
+                    document.getElementById('remaining-usage').textContent = Math.max(0, planLimit - usageCount).toLocaleString();
+
+                    const percentage = Math.min(100, (usageCount / planLimit) * 100);
+                    document.getElementById('usage-progress').style.width = `${percentage}%`;
+                } else {
+                    document.getElementById('plan-limit').textContent = '∞';
+                    document.getElementById('remaining-usage').textContent = '∞';
+                    document.getElementById('usage-progress').style.width = '0%';
+                }
+
+                // Reset days
+                document.getElementById('reset-days').textContent = calculateDaysUntilReset();
+
+                // Show dashboard
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('dashboard').style.display = 'block';
+
+            } catch (error) {
+                console.error('Error loading dashboard:', error);
+                document.getElementById('loading').style.display = 'none';
+                showError('Failed to load dashboard. Please try logging in again.');
+            }
+        }
+
+        // Load dashboard on page load
+        window.addEventListener('DOMContentLoaded', loadDashboard);
+    </script>
+</body>
+</html>
