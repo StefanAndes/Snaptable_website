@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - SnapTable</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background: linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 100%);
+            color: white;
+            min-height: 100vh;
+        }
+        .glass {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .stat-card {
+            background: rgba(139, 92, 246, 0.1);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            transition: all 0.3s;
+        }
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(139, 92, 246, 0.3);
+        }
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        .badge-active { background: rgba(34, 197, 94, 0.2); color: #86efac; }
+        .badge-trialing { background: rgba(59, 130, 246, 0.2); color: #93c5fd; }
+        .badge-inactive { background: rgba(107, 114, 128, 0.2); color: #d1d5db; }
+        .badge-canceled { background: rgba(239, 68, 68, 0.2); color: #fca5a5; }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 0.5rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(139, 92, 246, 0.3);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+        th {
+            background: rgba(139, 92, 246, 0.1);
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            border-bottom: 1px solid rgba(139, 92, 246, 0.3);
+        }
+        td {
+            padding: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        tr:hover {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .tab {
+            padding: 0.75rem 1.5rem;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 0.3s;
+        }
+        .tab:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+        .tab.active {
+            border-bottom-color: #8b5cf6;
+            background: rgba(139, 92, 246, 0.1);
+        }
+
+        .search-input {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: white;
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            width: 100%;
+        }
+        .search-input:focus {
+            outline: none;
+            border-color: #8b5cf6;
+        }
+
+        select {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: white;
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+        }
+        select:focus {
+            outline: none;
+            border-color: #8b5cf6;
+        }
+        option {
+            background: #1a1a1a;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mx-auto px-4 py-8 max-w-7xl">
+        <!-- Header -->
+        <div class="flex justify-between items-center mb-8">
+            <div>
+                <h1 class="text-3xl font-bold mb-2">Admin Dashboard</h1>
+                <p class="text-gray-400">Manage users, subscriptions, and analytics</p>
+            </div>
+            <div class="flex gap-4">
+                <button onclick="window.location.href='/account.html'" class="btn-primary">
+                    My Account
+                </button>
+                <button onclick="logout()" class="px-6 py-2 bg-red-500 rounded-lg hover:bg-red-600 transition">
+                    Logout
+                </button>
+            </div>
+        </div>
+
+        <!-- Stats Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8" id="stats-container">
+            <div class="stat-card">
+                <div class="text-gray-400 text-sm mb-2">Total Users</div>
+                <div class="text-3xl font-bold" id="stat-total-users">-</div>
+            </div>
+            <div class="stat-card">
+                <div class="text-gray-400 text-sm mb-2">Active Subscriptions</div>
+                <div class="text-3xl font-bold text-green-400" id="stat-active-subs">-</div>
+            </div>
+            <div class="stat-card">
+                <div class="text-gray-400 text-sm mb-2">Captures This Month</div>
+                <div class="text-3xl font-bold text-purple-400" id="stat-captures">-</div>
+            </div>
+            <div class="stat-card">
+                <div class="text-gray-400 text-sm mb-2">Free Users</div>
+                <div class="text-3xl font-bold text-gray-400" id="stat-free-users">-</div>
+            </div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="glass rounded-lg overflow-hidden">
+            <div class="flex border-b border-gray-700">
+                <div class="tab active" onclick="switchTab('users')">Users</div>
+                <div class="tab" onclick="switchTab('organizations')">Organizations</div>
+                <div class="tab" onclick="switchTab('analytics')">Analytics</div>
+            </div>
+
+            <!-- Users Tab -->
+            <div id="tab-users" class="p-6">
+                <!-- Filters -->
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+                    <input type="text" id="search-users" placeholder="Search by email or name..." class="search-input">
+
+                    <select id="filter-plan" onchange="loadUsers()">
+                        <option value="">All Plans</option>
+                        <option value="free">Free</option>
+                        <option value="starter">Starter</option>
+                        <option value="pro">Pro</option>
+                        <option value="enterprise">Enterprise</option>
+                    </select>
+
+                    <select id="filter-status" onchange="loadUsers()">
+                        <option value="">All Statuses</option>
+                        <option value="active">Active</option>
+                        <option value="trialing">Trialing</option>
+                        <option value="inactive">Inactive</option>
+                        <option value="canceled">Canceled</option>
+                    </select>
+
+                    <button onclick="loadUsers()" class="btn-primary">
+                        Search
+                    </button>
+                </div>
+
+                <!-- Users Table -->
+                <div class="overflow-x-auto">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Email</th>
+                                <th>Name</th>
+                                <th>Plan</th>
+                                <th>Status</th>
+                                <th>Captures</th>
+                                <th>Joined</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="users-table-body">
+                            <tr>
+                                <td colspan="7" class="text-center text-gray-400 py-8">Loading users...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Pagination -->
+                <div class="flex justify-between items-center mt-6">
+                    <div class="text-gray-400" id="users-pagination-info">-</div>
+                    <div class="flex gap-2">
+                        <button onclick="changePage('prev')" id="btn-prev" class="px-4 py-2 bg-gray-700 rounded hover:bg-gray-600 transition">
+                            Previous
+                        </button>
+                        <button onclick="changePage('next')" id="btn-next" class="px-4 py-2 bg-gray-700 rounded hover:bg-gray-600 transition">
+                            Next
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Organizations Tab -->
+            <div id="tab-organizations" class="p-6 hidden">
+                <div class="mb-6">
+                    <button onclick="createOrganization()" class="btn-primary">
+                        + Create Organization
+                    </button>
+                </div>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Owner</th>
+                            <th>Seats</th>
+                            <th>Active Members</th>
+                            <th>Created</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="orgs-table-body">
+                        <tr>
+                            <td colspan="6" class="text-center text-gray-400 py-8">Loading organizations...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Analytics Tab -->
+            <div id="tab-analytics" class="p-6 hidden">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="glass rounded-lg p-6">
+                        <h3 class="text-xl font-bold mb-4">Users by Plan</h3>
+                        <div id="chart-users-by-plan" class="space-y-3">
+                            <!-- Will be populated by JS -->
+                        </div>
+                    </div>
+
+                    <div class="glass rounded-lg p-6">
+                        <h3 class="text-xl font-bold mb-4">Subscription Status</h3>
+                        <div id="chart-subscription-status" class="space-y-3">
+                            <!-- Will be populated by JS -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- User Detail Modal -->
+    <div id="user-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+        <div class="glass rounded-lg p-8 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-start mb-6">
+                <h2 class="text-2xl font-bold">User Details</h2>
+                <button onclick="closeUserModal()" class="text-gray-400 hover:text-white text-2xl">&times;</button>
+            </div>
+            <div id="user-detail-content">
+                <!-- Will be populated by JS -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE_URL = 'https://2qrovdo4oa.execute-api.us-east-1.amazonaws.com/prod';
+        let currentPage = 1;
+        let currentTab = 'users';
+        let authToken = localStorage.getItem('authToken');
+
+        // Check if user is logged in and is admin
+        if (!authToken) {
+            window.location.href = '/login.html?redirect=admin';
+        }
+
+        // Load initial data
+        loadStats();
+        loadUsers();
+
+        // Search on Enter key
+        document.getElementById('search-users').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') loadUsers();
+        });
+
+        async function loadStats() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/admin/stats`, {
+                    headers: { 'Authorization': `Bearer ${authToken}` }
+                });
+
+                if (response.status === 403) {
+                    alert('Access denied. You need admin privileges.');
+                    window.location.href = '/account.html';
+                    return;
+                }
+
+                if (!response.ok) throw new Error('Failed to load stats');
+
+                const data = await response.json();
+                const stats = data.stats;
+
+                document.getElementById('stat-total-users').textContent = stats.total_users;
+                document.getElementById('stat-active-subs').textContent = stats.active_subscriptions;
+                document.getElementById('stat-captures').textContent = stats.total_captures_this_month.toLocaleString();
+                document.getElementById('stat-free-users').textContent = stats.users_by_plan.free || 0;
+
+                // Update analytics charts
+                updateAnalyticsCharts(stats);
+            } catch (error) {
+                console.error('Error loading stats:', error);
+            }
+        }
+
+        async function loadUsers() {
+            const search = document.getElementById('search-users').value;
+            const plan = document.getElementById('filter-plan').value;
+            const status = document.getElementById('filter-status').value;
+
+            const params = new URLSearchParams({
+                page: currentPage,
+                limit: 20,
+                ...(search && { search }),
+                ...(plan && { plan }),
+                ...(status && { status })
+            });
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/admin/users?${params}`, {
+                    headers: { 'Authorization': `Bearer ${authToken}` }
+                });
+
+                if (!response.ok) throw new Error('Failed to load users');
+
+                const data = await response.json();
+                renderUsersTable(data.users);
+                updatePagination(data.pagination);
+            } catch (error) {
+                console.error('Error loading users:', error);
+                document.getElementById('users-table-body').innerHTML = `
+                    <tr><td colspan="7" class="text-center text-red-400 py-8">Error loading users</td></tr>
+                `;
+            }
+        }
+
+        function renderUsersTable(users) {
+            const tbody = document.getElementById('users-table-body');
+
+            if (users.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" class="text-center text-gray-400 py-8">No users found</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = users.map(user => `
+                <tr>
+                    <td>${user.email}</td>
+                    <td>${user.full_name || '-'}</td>
+                    <td><span class="badge badge-${user.plan_type}">${user.plan_type}</span></td>
+                    <td><span class="badge badge-${user.subscription_status}">${user.subscription_status}</span></td>
+                    <td>${user.captures_this_month}</td>
+                    <td>${new Date(user.created_at).toLocaleDateString()}</td>
+                    <td>
+                        <button onclick="viewUser(${user.id})" class="text-purple-400 hover:text-purple-300">
+                            View
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function updatePagination(pagination) {
+            document.getElementById('users-pagination-info').textContent =
+                `Showing ${((pagination.page - 1) * pagination.limit) + 1} - ${Math.min(pagination.page * pagination.limit, pagination.total)} of ${pagination.total}`;
+
+            document.getElementById('btn-prev').disabled = pagination.page === 1;
+            document.getElementById('btn-next').disabled = pagination.page === pagination.pages;
+        }
+
+        function changePage(direction) {
+            if (direction === 'next') currentPage++;
+            else if (direction === 'prev' && currentPage > 1) currentPage--;
+            loadUsers();
+        }
+
+        async function viewUser(userId) {
+            try {
+                const response = await fetch(`${API_BASE_URL}/admin/users/${userId}`, {
+                    headers: { 'Authorization': `Bearer ${authToken}` }
+                });
+
+                if (!response.ok) throw new Error('Failed to load user details');
+
+                const data = await response.json();
+                showUserModal(data);
+            } catch (error) {
+                console.error('Error loading user details:', error);
+                alert('Error loading user details');
+            }
+        }
+
+        function showUserModal(data) {
+            const user = data.user;
+            const content = document.getElementById('user-detail-content');
+
+            content.innerHTML = `
+                <div class="space-y-4">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <div class="text-gray-400 text-sm">Email</div>
+                            <div class="font-semibold">${user.email}</div>
+                        </div>
+                        <div>
+                            <div class="text-gray-400 text-sm">Name</div>
+                            <div class="font-semibold">${user.full_name || '-'}</div>
+                        </div>
+                        <div>
+                            <div class="text-gray-400 text-sm">Plan</div>
+                            <div><span class="badge badge-${user.plan_type}">${user.plan_type}</span></div>
+                        </div>
+                        <div>
+                            <div class="text-gray-400 text-sm">Status</div>
+                            <div><span class="badge badge-${user.subscription_status}">${user.subscription_status}</span></div>
+                        </div>
+                        <div>
+                            <div class="text-gray-400 text-sm">Admin</div>
+                            <div>${user.is_admin ? 'Yes' : 'No'}</div>
+                        </div>
+                        <div>
+                            <div class="text-gray-400 text-sm">Active</div>
+                            <div>${user.is_active ? 'Yes' : 'No'}</div>
+                        </div>
+                    </div>
+
+                    <div class="mt-6">
+                        <h3 class="font-bold mb-2">Update User</h3>
+                        <div class="grid grid-cols-2 gap-4">
+                            <select id="update-plan" class="bg-gray-700 rounded px-3 py-2">
+                                <option value="free" ${user.plan_type === 'free' ? 'selected' : ''}>Free</option>
+                                <option value="starter" ${user.plan_type === 'starter' ? 'selected' : ''}>Starter</option>
+                                <option value="pro" ${user.plan_type === 'pro' ? 'selected' : ''}>Pro</option>
+                                <option value="enterprise" ${user.plan_type === 'enterprise' ? 'selected' : ''}>Enterprise</option>
+                            </select>
+                            <select id="update-status" class="bg-gray-700 rounded px-3 py-2">
+                                <option value="inactive" ${user.subscription_status === 'inactive' ? 'selected' : ''}>Inactive</option>
+                                <option value="trialing" ${user.subscription_status === 'trialing' ? 'selected' : ''}>Trialing</option>
+                                <option value="active" ${user.subscription_status === 'active' ? 'selected' : ''}>Active</option>
+                                <option value="canceled" ${user.subscription_status === 'canceled' ? 'selected' : ''}>Canceled</option>
+                            </select>
+                        </div>
+                        <div class="mt-4 flex gap-2">
+                            <label class="flex items-center gap-2">
+                                <input type="checkbox" id="update-admin" ${user.is_admin ? 'checked' : ''}>
+                                <span>Admin</span>
+                            </label>
+                            <label class="flex items-center gap-2">
+                                <input type="checkbox" id="update-active" ${user.is_active ? 'checked' : ''}>
+                                <span>Active</span>
+                            </label>
+                        </div>
+                        <button onclick="updateUser(${user.id})" class="btn-primary mt-4">
+                            Save Changes
+                        </button>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('user-modal').classList.remove('hidden');
+            document.getElementById('user-modal').classList.add('flex');
+        }
+
+        function closeUserModal() {
+            document.getElementById('user-modal').classList.add('hidden');
+            document.getElementById('user-modal').classList.remove('flex');
+        }
+
+        async function updateUser(userId) {
+            const updates = {
+                plan_type: document.getElementById('update-plan').value,
+                subscription_status: document.getElementById('update-status').value,
+                is_admin: document.getElementById('update-admin').checked,
+                is_active: document.getElementById('update-active').checked
+            };
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/admin/users/${userId}/update`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(updates)
+                });
+
+                if (!response.ok) throw new Error('Failed to update user');
+
+                alert('User updated successfully!');
+                closeUserModal();
+                loadUsers();
+                loadStats();
+            } catch (error) {
+                console.error('Error updating user:', error);
+                alert('Error updating user');
+            }
+        }
+
+        async function loadOrganizations() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/admin/organizations`, {
+                    headers: { 'Authorization': `Bearer ${authToken}` }
+                });
+
+                if (!response.ok) throw new Error('Failed to load organizations');
+
+                const data = await response.json();
+                renderOrganizationsTable(data.organizations);
+            } catch (error) {
+                console.error('Error loading organizations:', error);
+                document.getElementById('orgs-table-body').innerHTML = `
+                    <tr><td colspan="6" class="text-center text-red-400 py-8">Error loading organizations</td></tr>
+                `;
+            }
+        }
+
+        function renderOrganizationsTable(orgs) {
+            const tbody = document.getElementById('orgs-table-body');
+
+            if (orgs.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" class="text-center text-gray-400 py-8">No organizations found</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = orgs.map(org => `
+                <tr>
+                    <td>${org.name}</td>
+                    <td>${org.owner_email}</td>
+                    <td>${org.max_seats}</td>
+                    <td>${org.active_members}</td>
+                    <td>${new Date(org.created_at).toLocaleDateString()}</td>
+                    <td>
+                        <button onclick="viewOrganization(${org.id})" class="text-purple-400 hover:text-purple-300">
+                            View
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function updateAnalyticsCharts(stats) {
+            // Users by plan
+            const planChart = document.getElementById('chart-users-by-plan');
+            const plans = stats.users_by_plan;
+            const total = Object.values(plans).reduce((a, b) => a + b, 0);
+
+            planChart.innerHTML = Object.entries(plans).map(([plan, count]) => `
+                <div>
+                    <div class="flex justify-between mb-1">
+                        <span class="capitalize">${plan}</span>
+                        <span>${count} (${((count / total) * 100).toFixed(1)}%)</span>
+                    </div>
+                    <div class="bg-gray-700 rounded-full h-2">
+                        <div class="bg-purple-500 rounded-full h-2" style="width: ${(count / total) * 100}%"></div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function switchTab(tab) {
+            currentTab = tab;
+
+            // Update tab styling
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+
+            // Hide all tabs
+            document.getElementById('tab-users').classList.add('hidden');
+            document.getElementById('tab-organizations').classList.add('hidden');
+            document.getElementById('tab-analytics').classList.add('hidden');
+
+            // Show selected tab
+            document.getElementById(`tab-${tab}`).classList.remove('hidden');
+
+            // Load tab data
+            if (tab === 'organizations') loadOrganizations();
+            if (tab === 'analytics') loadStats();
+        }
+
+        function logout() {
+            localStorage.removeItem('authToken');
+            window.location.href = '/login.html';
+        }
+
+        function createOrganization() {
+            alert('Organization creation coming soon!');
+        }
+
+        function viewOrganization(orgId) {
+            alert(`View organization ${orgId} - Coming soon!`);
+        }
+    </script>
+</body>
+</html>
