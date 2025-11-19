@@ -85,7 +85,7 @@
             background: rgba(139, 92, 246, 0.1);
         }
 
-        .search-input {
+        .search-input, .form-input {
             background: rgba(255, 255, 255, 0.05);
             border: 1px solid rgba(255, 255, 255, 0.1);
             color: white;
@@ -93,7 +93,7 @@
             border-radius: 0.5rem;
             width: 100%;
         }
-        .search-input:focus {
+        .search-input:focus, .form-input:focus {
             outline: none;
             border-color: #8b5cf6;
         }
@@ -226,7 +226,7 @@
             <!-- Organizations Tab -->
             <div id="tab-organizations" class="p-6 hidden">
                 <div class="mb-6">
-                    <button onclick="createOrganization()" class="btn-primary">
+                    <button onclick="showCreateOrgModal()" class="btn-primary">
                         + Create Organization
                     </button>
                 </div>
@@ -235,16 +235,16 @@
                     <thead>
                         <tr>
                             <th>Name</th>
-                            <th>Owner</th>
-                            <th>Seats</th>
+                            <th>Plan Type</th>
+                            <th>License Limit</th>
                             <th>Active Members</th>
+                            <th>Status</th>
                             <th>Created</th>
-                            <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody id="orgs-table-body">
                         <tr>
-                            <td colspan="6" class="text-center text-gray-400 py-8">Loading organizations...</td>
+                            <td colspan="6" class="text-center text-gray-400 py-8">No organizations found</td>
                         </tr>
                     </tbody>
                 </table>
@@ -284,8 +284,47 @@
         </div>
     </div>
 
+    <!-- Create Organization Modal -->
+    <div id="create-org-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+        <div class="glass rounded-lg p-8 max-w-lg w-full mx-4">
+            <div class="flex justify-between items-start mb-6">
+                <h2 class="text-2xl font-bold">Create New Organization</h2>
+                <button onclick="closeCreateOrgModal()" class="text-gray-400 hover:text-white text-2xl">&times;</button>
+            </div>
+            <form id="create-org-form" onsubmit="submitCreateOrg(event)" class="space-y-4">
+                <div>
+                    <label class="block text-sm text-gray-400 mb-2">Organization Name *</label>
+                    <input type="text" id="org-name" required class="form-input" placeholder="Acme Corporation">
+                </div>
+                <div>
+                    <label class="block text-sm text-gray-400 mb-2">Plan Type *</label>
+                    <select id="org-plan-type" class="form-input" required>
+                        <option value="starter">Starter</option>
+                        <option value="professional">Professional</option>
+                        <option value="enterprise" selected>Enterprise</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm text-gray-400 mb-2">License Limit (captures/month)</label>
+                    <input type="number" id="org-license-limit" class="form-input" placeholder="2000" min="1">
+                </div>
+                <div>
+                    <label class="block text-sm text-gray-400 mb-2">Owner Email (optional)</label>
+                    <input type="email" id="org-owner-email" class="form-input" placeholder="admin@acme.com">
+                    <p class="text-xs text-gray-500 mt-1">If provided, this user will be assigned as the organization admin</p>
+                </div>
+                <div class="flex gap-4 mt-6">
+                    <button type="submit" class="btn-primary flex-1">Create Organization</button>
+                    <button type="button" onclick="closeCreateOrgModal()" class="px-6 py-2 bg-gray-700 rounded-lg hover:bg-gray-600 transition">
+                        Cancel
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <script>
-        const API_BASE_URL = 'https://f7otmeecqdf3ylgq4lddth7h4u0bnuxe.lambda-url.us-east-1.on.aws';
+        const API_BASE_URL = 'https://9prphetq81.execute-api.us-east-1.amazonaws.com/prod';
         let currentPage = 1;
         let currentTab = 'users';
         let authToken = localStorage.getItem('auth_token') || sessionStorage.getItem('auth_token');
@@ -558,17 +597,60 @@
             tbody.innerHTML = orgs.map(org => `
                 <tr>
                     <td>${org.name}</td>
-                    <td>${org.owner_email}</td>
-                    <td>${org.max_seats}</td>
+                    <td>${org.plan_type || '-'}</td>
+                    <td>${org.license_limit ? org.license_limit.toLocaleString() : '∞'}</td>
                     <td>${org.active_members}</td>
+                    <td><span class="badge badge-${org.subscription_status || 'active'}">${(org.subscription_status || 'active').toUpperCase()}</span></td>
                     <td>${new Date(org.created_at).toLocaleDateString()}</td>
-                    <td>
-                        <button onclick="viewOrganization(${org.id})" class="text-purple-400 hover:text-purple-300">
-                            View
-                        </button>
-                    </td>
                 </tr>
             `).join('');
+        }
+
+        function showCreateOrgModal() {
+            document.getElementById('create-org-modal').classList.remove('hidden');
+            document.getElementById('create-org-modal').classList.add('flex');
+        }
+
+        function closeCreateOrgModal() {
+            document.getElementById('create-org-modal').classList.add('hidden');
+            document.getElementById('create-org-modal').classList.remove('flex');
+            document.getElementById('create-org-form').reset();
+        }
+
+        async function submitCreateOrg(event) {
+            event.preventDefault();
+
+            const orgData = {
+                name: document.getElementById('org-name').value,
+                plan_type: document.getElementById('org-plan-type').value,
+                license_limit: document.getElementById('org-license-limit').value ? parseInt(document.getElementById('org-license-limit').value) : null,
+                owner_email: document.getElementById('org-owner-email').value || null
+            };
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/admin/organizations/create`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(orgData)
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    alert(data.error || 'Failed to create organization');
+                    return;
+                }
+
+                alert('Organization created successfully!');
+                closeCreateOrgModal();
+                loadOrganizations();
+            } catch (error) {
+                console.error('Error creating organization:', error);
+                alert(`Error: ${error.message}`);
+            }
         }
 
         function updateAnalyticsCharts(stats) {
@@ -614,14 +696,6 @@
             localStorage.removeItem('auth_token');
             localStorage.removeItem('user');
             window.location.href = '/login.html';
-        }
-
-        function createOrganization() {
-            alert('Organization creation coming soon!');
-        }
-
-        function viewOrganization(orgId) {
-            alert(`View organization ${orgId} - Coming soon!`);
         }
     </script>
 </body>
