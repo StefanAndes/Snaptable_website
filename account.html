@@ -73,7 +73,10 @@
                 <h1 class="text-3xl font-bold mb-2">My Account</h1>
                 <p class="text-gray-400">Manage your SnapTable account</p>
             </div>
-            <button onclick="logout()" class="btn-secondary">Logout</button>
+            <div class="flex gap-3">
+                <a href="admin.html" id="adminDashboardBtn" class="btn-primary" style="display: none;">Admin Dashboard</a>
+                <button onclick="logout()" class="btn-secondary">Logout</button>
+            </div>
         </div>
 
         <!-- User Info Card -->
@@ -246,6 +249,11 @@
 
                 // Update subscription section
                 updateSubscriptionSection(user);
+
+                // Show admin button if user is admin
+                if (user.is_admin === true) {
+                    document.getElementById('adminDashboardBtn').style.display = 'inline-block';
+                }
 
             } catch (error) {
                 console.error('Error loading user data:', error);
