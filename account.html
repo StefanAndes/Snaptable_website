@@ -296,6 +296,22 @@
             const freePlanCTA = document.getElementById('freePlanCTA');
             const activeSubscriptionInfo = document.getElementById('activeSubscriptionInfo');
 
+            // Check if user belongs to an organization
+            if (user.organization_id) {
+                // Organization user - hide both standard options
+                freePlanCTA.classList.add('hidden');
+                activeSubscriptionInfo.classList.add('hidden');
+
+                // Show organization billing info
+                document.getElementById('subscriptionSection').innerHTML = `
+                    <h2 class="text-xl font-semibold mb-4">Organization Subscription</h2>
+                    <p class="text-gray-300 mb-4">Your account is part of an organization. Contact your organization administrator to manage billing.</p>
+                    <p class="text-sm text-gray-400">Organization: ${user.organization_name || 'Organization #' + user.organization_id}</p>
+                    <p class="text-sm text-gray-400 mt-2">Status: <span class="badge ${status === 'active' ? 'badge-active' : 'badge-inactive'}">${status.charAt(0).toUpperCase() + status.slice(1)}</span></p>
+                `;
+                return;
+            }
+
             if (planType === 'free' || status === 'inactive') {
                 // Show upgrade options
                 freePlanCTA.classList.remove('hidden');
