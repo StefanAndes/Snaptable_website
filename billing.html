@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Billing - SnapTable</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background: linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 100%);
+            color: white;
+            min-height: 100vh;
+        }
+        .glass {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(139, 92, 246, 0.3);
+        }
+        .success-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 2rem;
+            font-size: 3rem;
+        }
+    </style>
+</head>
+<body class="p-8">
+    <div class="max-w-2xl mx-auto">
+        <div class="glass rounded-lg p-8 text-center">
+            <div id="loading" class="hidden">
+                <div class="animate-spin rounded-full h-16 w-16 border-b-2 border-purple-500 mx-auto"></div>
+                <p class="mt-4 text-gray-400">Verifying your subscription...</p>
+            </div>
+
+            <div id="success" class="hidden">
+                <div class="success-icon">✓</div>
+                <h1 class="text-3xl font-bold mb-4">Subscription Activated!</h1>
+                <p class="text-gray-300 mb-6">Your organization's SnapTable subscription is now active.</p>
+
+                <div class="glass rounded-lg p-6 mb-6 text-left">
+                    <h2 class="text-xl font-semibold mb-4">What's Next?</h2>
+                    <ul class="space-y-3 text-gray-300">
+                        <li>✓ All organization members can now download and use SnapTable</li>
+                        <li>✓ Access unlimited table extractions</li>
+                        <li>✓ Manage your subscription in the Customer Portal</li>
+                    </ul>
+                </div>
+
+                <div class="flex gap-4 justify-center">
+                    <a href="/account.html" class="btn-primary">Go to Account</a>
+                    <a href="/download.html" class="bg-gray-700 hover:bg-gray-600 px-6 py-3 rounded-lg font-semibold transition">Download App</a>
+                </div>
+            </div>
+
+            <div id="error" class="hidden">
+                <div class="text-red-500 text-6xl mb-4">✗</div>
+                <h1 class="text-3xl font-bold mb-4">Payment Issue</h1>
+                <p class="text-gray-300 mb-6" id="error-message"></p>
+                <a href="/account.html" class="btn-primary">Return to Account</a>
+            </div>
+        </div>
+
+        <!-- Session Info (for debugging) -->
+        <div class="glass rounded-lg p-4 mt-6">
+            <h3 class="text-sm font-semibold mb-2 text-gray-400">Session Info</h3>
+            <p class="text-xs text-gray-500 font-mono" id="session-id">No session ID</p>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE_URL = 'https://f7otmeecqdf3ylgq4lddth7h4u0bnuxe.lambda-url.us-east-1.on.aws';
+
+        // Get session ID from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const sessionId = urlParams.get('session_id');
+
+        document.getElementById('session-id').textContent = sessionId || 'No session ID in URL';
+
+        async function verifySession() {
+            if (!sessionId) {
+                // No session ID - show error
+                document.getElementById('error').classList.remove('hidden');
+                document.getElementById('error-message').textContent = 'No session ID found. Please try again.';
+                return;
+            }
+
+            // Show loading
+            document.getElementById('loading').classList.remove('hidden');
+
+            try {
+                // Get auth token from localStorage
+                const authToken = localStorage.getItem('authToken');
+
+                if (!authToken) {
+                    // Not logged in - redirect to login
+                    window.location.href = '/login.html?redirect=/billing.html?session_id=' + sessionId;
+                    return;
+                }
+
+                // Wait a moment for webhook to process (Stripe webhooks can take a few seconds)
+                await new Promise(resolve => setTimeout(resolve, 2000));
+
+                // Fetch subscription status
+                const response = await fetch(`${API_BASE_URL}/api/billing/subscription`, {
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to verify subscription');
+                }
+
+                const data = await response.json();
+
+                // Hide loading
+                document.getElementById('loading').classList.add('hidden');
+
+                // Check if subscription is active
+                if (data.subscription_status === 'active') {
+                    document.getElementById('success').classList.remove('hidden');
+                } else {
+                    // Payment may still be processing
+                    document.getElementById('error').classList.remove('hidden');
+                    document.getElementById('error-message').textContent =
+                        'Your payment is being processed. Please refresh this page in a moment or check your account page.';
+                }
+
+            } catch (error) {
+                console.error('Error verifying subscription:', error);
+                document.getElementById('loading').classList.add('hidden');
+                document.getElementById('error').classList.remove('hidden');
+                document.getElementById('error-message').textContent =
+                    'Unable to verify subscription status. Please check your account page.';
+            }
+        }
+
+        // Start verification
+        verifySession();
+    </script>
+</body>
+</html>

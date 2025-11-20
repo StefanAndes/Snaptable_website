@@ -302,12 +302,40 @@
                 freePlanCTA.classList.add('hidden');
                 activeSubscriptionInfo.classList.add('hidden');
 
-                // Show organization billing info
+                // Show organization billing info with admin controls
+                const isOrgAdmin = user.org_role === 'admin';
+
+                let billingButtons = '';
+                if (isOrgAdmin) {
+                    if (status === 'active') {
+                        billingButtons = `
+                            <div class="mt-6 flex gap-4">
+                                <button onclick="openCustomerPortal()" class="btn-primary">
+                                    Manage Billing
+                                </button>
+                                <a href="/download.html" class="btn-secondary">
+                                    Download App
+                                </a>
+                            </div>
+                        `;
+                    } else {
+                        billingButtons = `
+                            <div class="mt-6 flex gap-4">
+                                <button onclick="startSubscription()" class="btn-primary">
+                                    Subscribe Now
+                                </button>
+                            </div>
+                        `;
+                    }
+                }
+
                 document.getElementById('subscriptionSection').innerHTML = `
                     <h2 class="text-xl font-semibold mb-4">Organization Subscription</h2>
-                    <p class="text-gray-300 mb-4">Your account is part of an organization. Contact your organization administrator to manage billing.</p>
+                    <p class="text-gray-300 mb-4">${isOrgAdmin ? 'You are an administrator for this organization.' : 'Your account is part of an organization.'}</p>
                     <p class="text-sm text-gray-400">Organization: ${user.organization_name || 'Organization #' + user.organization_id}</p>
                     <p class="text-sm text-gray-400 mt-2">Status: <span class="badge ${status === 'active' ? 'badge-active' : 'badge-inactive'}">${status.charAt(0).toUpperCase() + status.slice(1)}</span></p>
+                    ${isOrgAdmin ? '' : '<p class="text-sm text-gray-400 mt-4">Contact your organization administrator to manage billing.</p>'}
+                    ${billingButtons}
                 `;
                 return;
             }
@@ -375,6 +403,67 @@
                 console.error('Error:', error);
                 alert('Error creating billing portal session');
             });
+        }
+
+        // Organization billing functions
+        async function startSubscription() {
+            const token = localStorage.getItem('authToken');
+            if (!token) {
+                alert('Please login again');
+                window.location.href = 'login.html';
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/billing/create-checkout-session`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                const data = await response.json();
+
+                if (data.success && data.checkout_url) {
+                    // Redirect to Stripe checkout
+                    window.location.href = data.checkout_url;
+                } else {
+                    alert('Error: ' + (data.error || 'Unable to create checkout session'));
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error creating checkout session');
+            }
+        }
+
+        async function openCustomerPortal() {
+            const token = localStorage.getItem('authToken');
+            if (!token) {
+                alert('Please login again');
+                window.location.href = 'login.html';
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/billing/portal-session`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                const data = await response.json();
+
+                if (data.success && data.portal_url) {
+                    // Redirect to Stripe Customer Portal
+                    window.location.href = data.portal_url;
+                } else {
+                    alert('Error: ' + (data.error || 'Unable to open customer portal'));
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error opening customer portal');
+            }
         }
 
         function upgradeSubscription() {
