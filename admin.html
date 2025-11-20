@@ -237,14 +237,15 @@
                             <th>Name</th>
                             <th>Plan Type</th>
                             <th>License Limit</th>
+                            <th>Monthly Price</th>
                             <th>Active Members</th>
                             <th>Status</th>
-                            <th>Created</th>
+                            <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody id="orgs-table-body">
                         <tr>
-                            <td colspan="6" class="text-center text-gray-400 py-8">No organizations found</td>
+                            <td colspan="7" class="text-center text-gray-400 py-8">No organizations found</td>
                         </tr>
                     </tbody>
                 </table>
@@ -316,6 +317,36 @@
                 <div class="flex gap-4 mt-6">
                     <button type="submit" class="btn-primary flex-1">Create Organization</button>
                     <button type="button" onclick="closeCreateOrgModal()" class="px-6 py-2 bg-gray-700 rounded-lg hover:bg-gray-600 transition">
+                        Cancel
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Set Pricing Modal -->
+    <div id="set-pricing-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+        <div class="glass rounded-lg p-8 max-w-md w-full mx-4">
+            <div class="flex justify-between items-start mb-6">
+                <h2 class="text-2xl font-bold">Set Monthly Pricing</h2>
+                <button onclick="closeSetPricingModal()" class="text-gray-400 hover:text-white text-2xl">&times;</button>
+            </div>
+            <form id="set-pricing-form" onsubmit="submitSetPricing(event)" class="space-y-4">
+                <div>
+                    <label class="block text-sm text-gray-400 mb-2">Organization</label>
+                    <div id="pricing-org-name" class="text-lg font-semibold mb-4"></div>
+                </div>
+                <div>
+                    <label class="block text-sm text-gray-400 mb-2">Monthly Price (USD) *</label>
+                    <div class="relative">
+                        <span class="absolute left-3 top-2.5 text-gray-400">$</span>
+                        <input type="number" id="pricing-amount" required class="form-input pl-8" placeholder="99.00" min="0" step="0.01">
+                    </div>
+                    <p class="text-xs text-gray-500 mt-1">Enter the monthly subscription price for this organization</p>
+                </div>
+                <div class="flex gap-4 mt-6">
+                    <button type="submit" class="btn-primary flex-1">Save Pricing</button>
+                    <button type="button" onclick="closeSetPricingModal()" class="px-6 py-2 bg-gray-700 rounded-lg hover:bg-gray-600 transition">
                         Cancel
                     </button>
                 </div>
@@ -590,7 +621,7 @@
             const tbody = document.getElementById('orgs-table-body');
 
             if (orgs.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="6" class="text-center text-gray-400 py-8">No organizations found</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="7" class="text-center text-gray-400 py-8">No organizations found</td></tr>';
                 return;
             }
 
@@ -599,9 +630,15 @@
                     <td>${org.name}</td>
                     <td>${org.plan_type || '-'}</td>
                     <td>${org.license_limit ? org.license_limit.toLocaleString() : '∞'}</td>
+                    <td>${org.monthly_price ? '$' + (org.monthly_price / 100).toFixed(2) + '/mo' : '<span class="text-gray-500">Not set</span>'}</td>
                     <td>${org.active_members}</td>
                     <td><span class="badge badge-${org.subscription_status || 'active'}">${(org.subscription_status || 'active').toUpperCase()}</span></td>
-                    <td>${new Date(org.created_at).toLocaleDateString()}</td>
+                    <td>
+                        <button onclick="showSetPricingModal(${org.id}, '${org.name}', ${org.monthly_price || 0})"
+                                class="text-purple-400 hover:text-purple-300 text-sm">
+                            ${org.monthly_price ? 'Update' : 'Set'} Pricing
+                        </button>
+                    </td>
                 </tr>
             `).join('');
         }
@@ -649,6 +686,55 @@
                 loadOrganizations();
             } catch (error) {
                 console.error('Error creating organization:', error);
+                alert(`Error: ${error.message}`);
+            }
+        }
+
+        let currentOrgId = null;
+
+        function showSetPricingModal(orgId, orgName, currentPrice) {
+            currentOrgId = orgId;
+            document.getElementById('pricing-org-name').textContent = orgName;
+            document.getElementById('pricing-amount').value = currentPrice ? (currentPrice / 100).toFixed(2) : '';
+            document.getElementById('set-pricing-modal').classList.remove('hidden');
+            document.getElementById('set-pricing-modal').classList.add('flex');
+        }
+
+        function closeSetPricingModal() {
+            currentOrgId = null;
+            document.getElementById('set-pricing-modal').classList.add('hidden');
+            document.getElementById('set-pricing-modal').classList.remove('flex');
+            document.getElementById('set-pricing-form').reset();
+        }
+
+        async function submitSetPricing(event) {
+            event.preventDefault();
+
+            const priceUSD = parseFloat(document.getElementById('pricing-amount').value);
+            const priceCents = Math.round(priceUSD * 100);
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/admin/organizations/${currentOrgId}/pricing`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ monthly_price: priceCents })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    alert(data.error || 'Failed to set pricing');
+                    return;
+                }
+
+                alert(`Pricing set to $${priceUSD.toFixed(2)}/month`);
+                closeSetPricingModal();
+                loadOrganizations();
+            } catch (error) {
+                console.error('Error setting pricing:', error);
                 alert(`Error: ${error.message}`);
             }
         }
