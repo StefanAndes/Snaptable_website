@@ -127,6 +127,8 @@
                     <div><strong>Plan:</strong> ${currentUser.plan_type}</div>
                     <div><strong>Subscription Status:</strong> ${currentUser.subscription_status}</div>
                     <div><strong>Admin:</strong> ${currentUser.is_admin ? 'Yes' : 'No'}</div>
+                    <div><strong>Organization ID:</strong> ${currentUser.organization_id || 'None'}</div>
+                    <div><strong>Org Role:</strong> ${currentUser.org_role || 'None'}</div>
                 `;
 
                 // Show checkout section
