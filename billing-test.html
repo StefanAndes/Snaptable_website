@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Billing Test - SnapTable</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://js.stripe.com/v3/"></script>
+    <style>
+        body {
+            background: linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 100%);
+            color: white;
+            min-height: 100vh;
+        }
+        .glass {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(139, 92, 246, 0.3);
+        }
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+    </style>
+</head>
+<body class="p-8">
+    <div class="max-w-4xl mx-auto">
+        <h1 class="text-4xl font-bold mb-8">SnapTable Billing Flow Test</h1>
+
+        <!-- Login Section -->
+        <div id="login-section" class="glass rounded-lg p-6 mb-6">
+            <h2 class="text-2xl font-bold mb-4">Step 1: Login</h2>
+            <div class="space-y-4">
+                <input type="email" id="email" placeholder="Email" class="w-full bg-gray-800 rounded px-4 py-3 text-white">
+                <input type="password" id="password" placeholder="Password" class="w-full bg-gray-800 rounded px-4 py-3 text-white">
+                <button onclick="login()" class="btn-primary w-full">Login</button>
+            </div>
+            <div id="login-status" class="mt-4 text-sm"></div>
+        </div>
+
+        <!-- User Info Section -->
+        <div id="user-info-section" class="glass rounded-lg p-6 mb-6 hidden">
+            <h2 class="text-2xl font-bold mb-4">User Information</h2>
+            <div id="user-info" class="space-y-2 text-sm"></div>
+        </div>
+
+        <!-- Create Checkout Section -->
+        <div id="checkout-section" class="glass rounded-lg p-6 mb-6 hidden">
+            <h2 class="text-2xl font-bold mb-4">Step 2: Create Stripe Checkout Session</h2>
+            <p class="text-gray-400 mb-4">This will create a Stripe checkout session for your organization's subscription.</p>
+            <button onclick="createCheckoutSession()" class="btn-primary">Create Checkout Session</button>
+            <div id="checkout-status" class="mt-4 text-sm"></div>
+        </div>
+
+        <!-- Portal Section -->
+        <div id="portal-section" class="glass rounded-lg p-6 mb-6 hidden">
+            <h2 class="text-2xl font-bold mb-4">Step 3: Manage Subscription</h2>
+            <p class="text-gray-400 mb-4">Access the Stripe Customer Portal to manage your subscription.</p>
+            <button onclick="createPortalSession()" class="btn-primary">Open Customer Portal</button>
+            <div id="portal-status" class="mt-4 text-sm"></div>
+        </div>
+
+        <!-- Logs Section -->
+        <div class="glass rounded-lg p-6">
+            <h2 class="text-2xl font-bold mb-4">Debug Logs</h2>
+            <div id="logs" class="text-xs font-mono space-y-1 text-gray-400"></div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE_URL = 'https://f7otmeecqdf3ylgq4lddth7h4u0bnuxe.lambda-url.us-east-1.on.aws';
+        let authToken = null;
+        let currentUser = null;
+
+        function log(message, type = 'info') {
+            const logs = document.getElementById('logs');
+            const timestamp = new Date().toLocaleTimeString();
+            const color = type === 'error' ? 'text-red-400' : type === 'success' ? 'text-green-400' : 'text-gray-400';
+            logs.innerHTML = `<div class="${color}">[${timestamp}] ${message}</div>` + logs.innerHTML;
+        }
+
+        async function login() {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            log(`Attempting login for ${email}...`);
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    log(`Login failed: ${data.error}`, 'error');
+                    document.getElementById('login-status').innerHTML = `<span class="text-red-400">❌ ${data.error}</span>`;
+                    return;
+                }
+
+                authToken = data.token;
+                currentUser = data.user;
+
+                log(`Login successful! User ID: ${currentUser.id}`, 'success');
+                document.getElementById('login-status').innerHTML = '<span class="text-green-400">✓ Logged in successfully</span>';
+
+                // Show user info
+                document.getElementById('user-info-section').classList.remove('hidden');
+                document.getElementById('user-info').innerHTML = `
+                    <div><strong>Email:</strong> ${currentUser.email}</div>
+                    <div><strong>Plan:</strong> ${currentUser.plan_type}</div>
+                    <div><strong>Subscription Status:</strong> ${currentUser.subscription_status}</div>
+                    <div><strong>Admin:</strong> ${currentUser.is_admin ? 'Yes' : 'No'}</div>
+                `;
+
+                // Show checkout section
+                document.getElementById('checkout-section').classList.remove('hidden');
+
+                // Show portal section if already subscribed
+                if (currentUser.subscription_status === 'active') {
+                    document.getElementById('portal-section').classList.remove('hidden');
+                }
+
+            } catch (error) {
+                log(`Login error: ${error.message}`, 'error');
+                document.getElementById('login-status').innerHTML = `<span class="text-red-400">❌ Error: ${error.message}</span>`;
+            }
+        }
+
+        async function createCheckoutSession() {
+            log('Creating Stripe checkout session...');
+            document.getElementById('checkout-status').innerHTML = '<span class="text-yellow-400">Creating session...</span>';
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/billing/create-checkout-session`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    log(`Checkout creation failed: ${data.error}`, 'error');
+                    document.getElementById('checkout-status').innerHTML = `<span class="text-red-400">❌ ${data.error}</span>`;
+                    return;
+                }
+
+                log(`Checkout session created! Session ID: ${data.sessionId}`, 'success');
+                log(`Redirecting to Stripe Checkout...`, 'info');
+
+                // Redirect to Stripe Checkout
+                window.location.href = data.url;
+
+            } catch (error) {
+                log(`Checkout error: ${error.message}`, 'error');
+                document.getElementById('checkout-status').innerHTML = `<span class="text-red-400">❌ Error: ${error.message}</span>`;
+            }
+        }
+
+        async function createPortalSession() {
+            log('Creating Stripe portal session...');
+            document.getElementById('portal-status').innerHTML = '<span class="text-yellow-400">Creating session...</span>';
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/billing/portal-session`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    log(`Portal creation failed: ${data.error}`, 'error');
+                    document.getElementById('portal-status').innerHTML = `<span class="text-red-400">❌ ${data.error}</span>`;
+                    return;
+                }
+
+                log(`Portal session created! Redirecting...`, 'success');
+
+                // Redirect to Stripe Customer Portal
+                window.location.href = data.url;
+
+            } catch (error) {
+                log(`Portal error: ${error.message}`, 'error');
+                document.getElementById('portal-status').innerHTML = `<span class="text-red-400">❌ Error: ${error.message}</span>`;
+            }
+        }
+
+        log('Billing test page loaded. Ready to test!', 'success');
+    </script>
+</body>
+</html>
