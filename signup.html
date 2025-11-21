@@ -287,13 +287,44 @@
                 const data = await response.json();
 
                 if (response.ok && data.success) {
-                    // Signup successful
-                    showSuccess('Account created successfully! Redirecting to login...');
+                    // Signup successful - now log them in automatically
+                    showSuccess('Account created! Logging you in...');
 
-                    // Redirect to login after 2 seconds
-                    setTimeout(() => {
-                        window.location.href = `login.html?email=${encodeURIComponent(email)}`;
-                    }, 2000);
+                    // Automatically log them in
+                    try {
+                        const loginResponse = await fetch(`${API_BASE_URL}/auth/login`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                email,
+                                password
+                            })
+                        });
+
+                        const loginData = await loginResponse.json();
+
+                        if (loginResponse.ok && loginData.success) {
+                            // Save token
+                            localStorage.setItem('auth_token', loginData.token);
+                            localStorage.setItem('user', JSON.stringify(loginData.user));
+
+                            // Redirect to dashboard
+                            window.location.href = 'account.html';
+                        } else {
+                            // Login failed, send them to login page
+                            showSuccess('Account created! Please login...');
+                            setTimeout(() => {
+                                window.location.href = `login.html?email=${encodeURIComponent(email)}`;
+                            }, 2000);
+                        }
+                    } catch (loginError) {
+                        // Auto-login failed, send them to login page
+                        setTimeout(() => {
+                            window.location.href = `login.html?email=${encodeURIComponent(email)}`;
+                        }, 2000);
+                    }
 
                 } else {
                     // Signup failed
