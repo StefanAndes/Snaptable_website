@@ -242,7 +242,7 @@
         });
 
         function checkAuth() {
-            const token = localStorage.getItem('authToken');
+            const token = localStorage.getItem('auth_token');
             if (!token) {
                 // Not logged in, redirect to login
                 window.location.href = 'login.html';
@@ -251,7 +251,7 @@
         }
 
         async function loadUserData() {
-            const token = localStorage.getItem('authToken');
+            const token = localStorage.getItem('auth_token');
             if (!token) {
                 console.error('No auth token found');
                 window.location.href = 'login.html';
@@ -317,7 +317,7 @@
                 // Only redirect if token is actually invalid (401)
                 // Don't redirect on network errors or other issues
                 alert('Error loading user data. Check console for details. Redirecting to login...');
-                localStorage.removeItem('authToken');
+                localStorage.removeItem('auth_token');
                 localStorage.removeItem('user');
                 window.location.href = 'login.html';
             }
