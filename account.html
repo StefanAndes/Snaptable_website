@@ -259,6 +259,7 @@
             }
 
             try {
+                console.log('Fetching user data from API...');
                 // Fetch fresh user data from API
                 const response = await fetch(`${API_BASE_URL}/auth/validate`, {
                     headers: {
@@ -266,12 +267,23 @@
                     }
                 });
 
+                console.log('API response status:', response.status);
+
                 if (!response.ok) {
+                    console.error('API returned error status:', response.status);
                     throw new Error('Failed to validate token');
                 }
 
                 const data = await response.json();
+                console.log('API response data:', data);
+
+                if (!data.valid || !data.user) {
+                    console.error('Invalid response format:', data);
+                    throw new Error('Invalid response format');
+                }
+
                 const user = data.user;
+                console.log('User data loaded successfully:', user.email);
 
                 // Update localStorage with fresh data
                 localStorage.setItem('user', JSON.stringify(user));
@@ -302,7 +314,9 @@
 
             } catch (error) {
                 console.error('Error loading user data:', error);
-                // If token is invalid, redirect to login
+                // Only redirect if token is actually invalid (401)
+                // Don't redirect on network errors or other issues
+                alert('Error loading user data. Check console for details. Redirecting to login...');
                 localStorage.removeItem('authToken');
                 localStorage.removeItem('user');
                 window.location.href = 'login.html';
