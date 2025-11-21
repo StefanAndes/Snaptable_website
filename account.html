@@ -242,7 +242,7 @@
         });
 
         function checkAuth() {
-            const token = localStorage.getItem('auth_token') || sessionStorage.getItem('auth_token');
+            const token = localStorage.getItem('authToken');
             if (!token) {
                 // Not logged in, redirect to login
                 window.location.href = 'login.html';
