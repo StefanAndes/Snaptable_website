@@ -242,7 +242,7 @@
         });
 
         function checkAuth() {
-            const token = localStorage.getItem('auth_token');
+            const token = localStorage.getItem('auth_token') || sessionStorage.getItem('auth_token');
             if (!token) {
                 // Not logged in, redirect to login
                 window.location.href = 'login.html';
@@ -251,7 +251,7 @@
         }
 
         async function loadUserData() {
-            const token = localStorage.getItem('auth_token');
+            const token = localStorage.getItem('auth_token') || sessionStorage.getItem('auth_token');
             if (!token) {
                 console.error('No auth token found');
                 window.location.href = 'login.html';
@@ -319,6 +319,8 @@
                 alert('Error loading user data. Check console for details. Redirecting to login...');
                 localStorage.removeItem('auth_token');
                 localStorage.removeItem('user');
+                sessionStorage.removeItem('auth_token');
+                sessionStorage.removeItem('user');
                 window.location.href = 'login.html';
             }
         }
