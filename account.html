@@ -250,15 +250,31 @@
             }
         }
 
-        function loadUserData() {
-            const userStr = localStorage.getItem('user') || sessionStorage.getItem('user');
-            if (!userStr) {
-                console.error('No user data found');
+        async function loadUserData() {
+            const token = localStorage.getItem('authToken');
+            if (!token) {
+                console.error('No auth token found');
+                window.location.href = 'login.html';
                 return;
             }
 
             try {
-                const user = JSON.parse(userStr);
+                // Fetch fresh user data from API
+                const response = await fetch(`${API_BASE_URL}/auth/validate`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to validate token');
+                }
+
+                const data = await response.json();
+                const user = data.user;
+
+                // Update localStorage with fresh data
+                localStorage.setItem('user', JSON.stringify(user));
 
                 // Update UI with user data
                 document.getElementById('userEmail').textContent = user.email || '-';
@@ -286,6 +302,10 @@
 
             } catch (error) {
                 console.error('Error loading user data:', error);
+                // If token is invalid, redirect to login
+                localStorage.removeItem('authToken');
+                localStorage.removeItem('user');
+                window.location.href = 'login.html';
             }
         }
 
