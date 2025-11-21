@@ -441,7 +441,7 @@
 
         // Organization billing functions
         async function startSubscription() {
-            const token = localStorage.getItem('authToken');
+            const token = localStorage.getItem('auth_token');
             if (!token) {
                 alert('Please login again');
                 window.location.href = 'login.html';
@@ -471,7 +471,7 @@
         }
 
         async function openCustomerPortal() {
-            const token = localStorage.getItem('authToken');
+            const token = localStorage.getItem('auth_token');
             if (!token) {
                 alert('Please login again');
                 window.location.href = 'login.html';
