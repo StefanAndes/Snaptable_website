@@ -150,7 +150,7 @@
     <!-- Navigation -->
     <nav class="fixed top-0 w-full z-50 glass">
         <div class="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
-            <a href="/" class="flex items-center gap-2">
+            <a href="/" class="flex items-center gap-2 ml-4">
                 <!-- Logo Option 1: Camera viewfinder with grid -->
                 <svg width="36" height="36" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" id="logo1" style="display: none;">
                     <circle cx="16" cy="16" r="14" stroke="white" stroke-width="2" fill="none"/>
@@ -740,22 +740,7 @@
         </div>
     </footer>
 
-    <!-- Logo Switcher (temporary for testing) -->
-    <div style="position: fixed; bottom: 20px; right: 20px; z-index: 1000; background: rgba(0,0,0,0.8); padding: 15px; border-radius: 10px; color: white; font-size: 12px;">
-        <div style="margin-bottom: 10px; font-weight: bold;">Choose Logo:</div>
-        <button onclick="switchLogo(1)" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 8px 12px; border: none; border-radius: 5px; margin: 5px; cursor: pointer;">Option 1: Viewfinder</button><br>
-        <button onclick="switchLogo(2)" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 8px 12px; border: none; border-radius: 5px; margin: 5px; cursor: pointer;">Option 2: Grid + Cursor</button><br>
-        <button onclick="switchLogo(4)" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 8px 12px; border: none; border-radius: 5px; margin: 5px; cursor: pointer;">Option 4: Transformation</button>
-    </div>
-
     <script>
-        function switchLogo(option) {
-            document.getElementById('logo1').style.display = 'none';
-            document.getElementById('logo2').style.display = 'none';
-            document.getElementById('logo4').style.display = 'none';
-            document.getElementById('logo' + option).style.display = 'block';
-        }
-
         function copyEmail() {
             const email = 'info@snaptable.app';
             navigator.clipboard.writeText(email).then(() => {
