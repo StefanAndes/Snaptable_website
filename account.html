@@ -200,26 +200,6 @@
             <p class="text-sm text-gray-400 mt-4">The desktop app will automatically connect using your login credentials.</p>
         </div>
 
-        <!-- Quick Stats (placeholder for future) -->
-        <div class="glass rounded-xl p-6">
-            <h2 class="text-xl font-semibold mb-4">Usage Statistics</h2>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div class="stat-card">
-                    <p class="text-gray-400 text-sm mb-1">Total Captures</p>
-                    <p class="text-3xl font-bold">0</p>
-                </div>
-                <div class="stat-card">
-                    <p class="text-gray-400 text-sm mb-1">This Month</p>
-                    <p class="text-3xl font-bold">0</p>
-                </div>
-                <div class="stat-card">
-                    <p class="text-gray-400 text-sm mb-1">Last Capture</p>
-                    <p class="text-lg font-semibold">Never</p>
-                </div>
-            </div>
-            <p class="text-sm text-gray-400 mt-4">Usage tracking coming soon!</p>
-        </div>
-
         <!-- Footer Links -->
         <div class="mt-8 text-center text-gray-400">
             <a href="index.html" class="hover:text-white transition">Home</a>
@@ -238,7 +218,7 @@
         window.addEventListener('DOMContentLoaded', () => {
             checkAuth();
             loadUserData();
-            // loadUsageStats(); // TODO: Implement usage stats endpoint
+            loadUsageStats();
         });
 
         function checkAuth() {
@@ -418,8 +398,8 @@
                 return;
             }
 
-            // Call API to create billing portal session
-            fetch(`${API_BASE_URL}/stripe/create-portal-session`, {
+            // Call API to create billing portal session (for individual users)
+            fetch(`${API_BASE_URL}/api/billing/user-portal-session`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -428,11 +408,11 @@
             })
             .then(response => response.json())
             .then(data => {
-                if (data.url) {
+                if (data.success && data.portal_url) {
                     // Redirect to Stripe billing portal
-                    window.location.href = data.url;
+                    window.location.href = data.portal_url;
                 } else {
-                    alert('Error creating billing portal session');
+                    alert('Error: ' + (data.error || 'Unable to create billing portal session'));
                 }
             })
             .catch(error => {
@@ -547,7 +527,7 @@
                 }
 
                 const data = await response.json();
-                const stats = data.stats;
+                const stats = data; // Backend returns stats directly, not wrapped in 'stats' property
 
                 // Plan limits
                 const planLimits = {
@@ -560,7 +540,7 @@
                 const user = JSON.parse(localStorage.getItem('user') || sessionStorage.getItem('user'));
                 const planType = user?.plan_type || 'free';
                 const limit = planLimits[planType];
-                const used = stats.total_captures;
+                const used = stats.captures_this_month; // Use monthly captures, not total
                 const remaining = Math.max(0, limit - used);
                 const percent = Math.min(100, Math.round((used / limit) * 100));
 
