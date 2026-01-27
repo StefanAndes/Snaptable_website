@@ -198,6 +198,16 @@
         // API Configuration
         const API_BASE_URL = 'https://f7otmeecqdf3ylgq4lddth7h4u0bnuxe.lambda-url.us-east-1.on.aws';
 
+        // Stripe Payment Links for each plan
+        const STRIPE_PAYMENT_LINKS = {
+            'starter': 'https://buy.stripe.com/bJeaEZ83B7AC26Y0p28k803',
+            'pro': 'https://buy.stripe.com/4gM3cxdnV9IKbHyb3G8k802'
+        };
+
+        // Get plan from URL params (if user came from pricing)
+        const urlParams = new URLSearchParams(window.location.search);
+        const selectedPlan = urlParams.get('plan');
+
         // Get form elements
         const signupForm = document.getElementById('signupForm');
         const signupBtn = document.getElementById('signupBtn');
@@ -310,19 +320,33 @@
                             localStorage.setItem('auth_token', loginData.token);
                             localStorage.setItem('user', JSON.stringify(loginData.user));
 
-                            // Redirect to dashboard
-                            window.location.href = 'account.html';
+                            // Redirect based on plan selection
+                            if (selectedPlan && STRIPE_PAYMENT_LINKS[selectedPlan]) {
+                                // User came from pricing - send to Stripe checkout
+                                // Append email as prefilled customer email
+                                const stripeUrl = STRIPE_PAYMENT_LINKS[selectedPlan] + '?prefilled_email=' + encodeURIComponent(email);
+                                window.location.href = stripeUrl;
+                            } else {
+                                // No plan selected - go to account page
+                                window.location.href = 'account.html';
+                            }
                         } else {
-                            // Login failed, send them to login page
+                            // Login failed, send them to login page (with plan if set)
                             showSuccess('Account created! Please login...');
                             setTimeout(() => {
-                                window.location.href = `login.html?email=${encodeURIComponent(email)}`;
+                                const loginUrl = selectedPlan
+                                    ? `login.html?email=${encodeURIComponent(email)}&plan=${selectedPlan}`
+                                    : `login.html?email=${encodeURIComponent(email)}`;
+                                window.location.href = loginUrl;
                             }, 2000);
                         }
                     } catch (loginError) {
-                        // Auto-login failed, send them to login page
+                        // Auto-login failed, send them to login page (with plan if set)
                         setTimeout(() => {
-                            window.location.href = `login.html?email=${encodeURIComponent(email)}`;
+                            const loginUrl = selectedPlan
+                                ? `login.html?email=${encodeURIComponent(email)}&plan=${selectedPlan}`
+                                : `login.html?email=${encodeURIComponent(email)}`;
+                            window.location.href = loginUrl;
                         }, 2000);
                     }
 
@@ -358,12 +382,26 @@
             successMessage.style.display = 'none';
         }
 
-        // Pre-fill email if coming from login page
+        // Pre-fill email and handle plan parameter
         window.addEventListener('DOMContentLoaded', () => {
-            const urlParams = new URLSearchParams(window.location.search);
             const email = urlParams.get('email');
             if (email) {
                 document.getElementById('email').value = email;
+            }
+
+            // Update login link to pass plan if set
+            if (selectedPlan) {
+                const loginLink = document.querySelector('a[href="login.html"]');
+                if (loginLink) {
+                    loginLink.href = `login.html?plan=${selectedPlan}`;
+                }
+
+                // Update the info box to reflect plan flow
+                const infoBox = document.querySelector('.glass.rounded-xl.p-4.text-center');
+                if (infoBox) {
+                    const planName = selectedPlan.charAt(0).toUpperCase() + selectedPlan.slice(1);
+                    infoBox.innerHTML = `<p>📋 <strong>${planName} Plan Selected</strong></p><p class="mt-2">Create your account to start your 7-day free trial!</p>`;
+                }
             }
         });
     </script>

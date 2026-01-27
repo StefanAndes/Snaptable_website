@@ -148,6 +148,17 @@
         // API Configuration
         const API_BASE_URL = 'https://f7otmeecqdf3ylgq4lddth7h4u0bnuxe.lambda-url.us-east-1.on.aws';
 
+        // Stripe Payment Links for each plan
+        const STRIPE_PAYMENT_LINKS = {
+            'starter': 'https://buy.stripe.com/bJeaEZ83B7AC26Y0p28k803',
+            'pro': 'https://buy.stripe.com/4gM3cxdnV9IKbHyb3G8k802'
+        };
+
+        // Get plan from URL params (if user came from pricing or signup)
+        const urlParams = new URLSearchParams(window.location.search);
+        const selectedPlan = urlParams.get('plan');
+        const prefillEmail = urlParams.get('email');
+
         // Get form elements
         const loginForm = document.getElementById('loginForm');
         const loginBtn = document.getElementById('loginBtn');
@@ -198,9 +209,16 @@
                     // Show success
                     showSuccess('Login successful! Redirecting...');
 
-                    // Redirect to account page after 1 second
+                    // Redirect based on plan selection
                     setTimeout(() => {
-                        window.location.href = 'account.html';
+                        if (selectedPlan && STRIPE_PAYMENT_LINKS[selectedPlan]) {
+                            // User came from pricing - send to Stripe checkout
+                            const stripeUrl = STRIPE_PAYMENT_LINKS[selectedPlan] + '?prefilled_email=' + encodeURIComponent(email);
+                            window.location.href = stripeUrl;
+                        } else {
+                            // No plan selected - go to account page
+                            window.location.href = 'account.html';
+                        }
                     }, 1000);
 
                 } else {
@@ -235,6 +253,19 @@
 
         // Check if already logged in
         window.addEventListener('DOMContentLoaded', () => {
+            // Pre-fill email if passed in URL
+            if (prefillEmail) {
+                document.getElementById('email').value = prefillEmail;
+            }
+
+            // Update signup link to pass plan if set
+            if (selectedPlan) {
+                const signupLink = document.querySelector('a[href="signup.html"]');
+                if (signupLink) {
+                    signupLink.href = `signup.html?plan=${selectedPlan}`;
+                }
+            }
+
             const token = localStorage.getItem('auth_token') || sessionStorage.getItem('auth_token');
             if (token) {
                 // Validate token
@@ -246,8 +277,15 @@
                 .then(res => res.json())
                 .then(data => {
                     if (data.valid) {
-                        // Already logged in, redirect to account
-                        window.location.href = 'account.html';
+                        // Already logged in - check if plan was selected
+                        if (selectedPlan && STRIPE_PAYMENT_LINKS[selectedPlan]) {
+                            // Get user email for prefill
+                            const user = JSON.parse(localStorage.getItem('user') || sessionStorage.getItem('user') || '{}');
+                            const stripeUrl = STRIPE_PAYMENT_LINKS[selectedPlan] + '?prefilled_email=' + encodeURIComponent(user.email || '');
+                            window.location.href = stripeUrl;
+                        } else {
+                            window.location.href = 'account.html';
+                        }
                     }
                 })
                 .catch(err => console.error('Token validation error:', err));
