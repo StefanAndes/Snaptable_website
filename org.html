@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Organization Dashboard - SnapTable</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background: linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 100%);
+            color: white;
+            min-height: 100vh;
+        }
+        .glass {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .stat-card {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            padding: 1.5rem;
+            border-radius: 1rem;
+        }
+        .member-row {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s;
+        }
+        .member-row:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(139, 92, 246, 0.5);
+        }
+        .badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        .badge-active {
+            background: rgba(34, 197, 94, 0.2);
+            color: #86efac;
+        }
+        .badge-inactive {
+            background: rgba(239, 68, 68, 0.2);
+            color: #fca5a5;
+        }
+        .badge-admin {
+            background: rgba(139, 92, 246, 0.2);
+            color: #c4b5fd;
+        }
+        .badge-member {
+            background: rgba(59, 130, 246, 0.2);
+            color: #93c5fd;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 0.5rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(139, 92, 246, 0.3);
+        }
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 0.5rem 1.5rem;
+            border-radius: 0.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s;
+        }
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(139, 92, 246, 0.5);
+        }
+        .progress-bar {
+            background: rgba(255, 255, 255, 0.1);
+            height: 8px;
+            border-radius: 9999px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            height: 100%;
+            transition: width 0.5s ease;
+        }
+        .tab {
+            padding: 0.75rem 1.5rem;
+            border-bottom: 2px solid transparent;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .tab:hover {
+            color: #c4b5fd;
+        }
+        .tab.active {
+            border-bottom-color: #8b5cf6;
+            color: #c4b5fd;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(5px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal.show {
+            display: flex;
+        }
+        .input-field {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: white;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            width: 100%;
+        }
+        .input-field:focus {
+            outline: none;
+            border-color: #8b5cf6;
+            background: rgba(255, 255, 255, 0.08);
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="glass border-b border-white/10">
+        <div class="max-w-7xl mx-auto px-6 py-4">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center gap-8">
+                    <h1 class="text-2xl font-bold">SnapTable</h1>
+                    <span class="text-gray-400" id="orgName">Loading...</span>
+                </div>
+                <div class="flex items-center gap-4">
+                    <a href="account.html" class="text-gray-400 hover:text-white transition">My Account</a>
+                    <button id="logoutBtn" class="btn-secondary">Logout</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="max-w-7xl mx-auto px-6 py-8">
+        <!-- Header -->
+        <div class="mb-8">
+            <h1 class="text-4xl font-bold mb-2">Organization Dashboard</h1>
+            <p class="text-gray-400">Manage your team and monitor usage</p>
+        </div>
+
+        <!-- Stats Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <!-- Total Members -->
+            <div class="stat-card">
+                <div class="text-gray-400 text-sm mb-1">Total Members</div>
+                <div class="text-3xl font-bold" id="totalMembers">0</div>
+            </div>
+
+            <!-- Active Members -->
+            <div class="stat-card">
+                <div class="text-gray-400 text-sm mb-1">Active Members</div>
+                <div class="text-3xl font-bold text-green-400" id="activeMembers">0</div>
+            </div>
+
+            <!-- Total Usage (This Month) -->
+            <div class="stat-card">
+                <div class="text-gray-400 text-sm mb-1">Captures This Month</div>
+                <div class="text-3xl font-bold text-purple-400" id="monthlyCaptures">0</div>
+            </div>
+
+            <!-- License Limit -->
+            <div class="stat-card">
+                <div class="text-gray-400 text-sm mb-1">License Limit</div>
+                <div class="text-3xl font-bold" id="licenseLimit">0</div>
+            </div>
+        </div>
+
+        <!-- Organization Usage -->
+        <div class="glass rounded-2xl p-6 mb-8">
+            <h2 class="text-2xl font-bold mb-6">Organization Usage</h2>
+
+            <div class="mb-4">
+                <div class="flex justify-between text-sm mb-2">
+                    <span class="text-gray-400">Total Captures (Last 30 Days)</span>
+                    <span class="font-semibold">
+                        <span id="totalCaptures">0</span> / <span id="captureLimit">Unlimited</span>
+                    </span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="usageProgress" style="width: 0%"></div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
+                <div class="glass p-4 rounded-lg">
+                    <div class="text-gray-400 text-sm">Today</div>
+                    <div class="text-2xl font-bold" id="todayCaptures">0</div>
+                </div>
+                <div class="glass p-4 rounded-lg">
+                    <div class="text-gray-400 text-sm">This Week</div>
+                    <div class="text-2xl font-bold" id="weekCaptures">0</div>
+                </div>
+                <div class="glass p-4 rounded-lg">
+                    <div class="text-gray-400 text-sm">This Month</div>
+                    <div class="text-2xl font-bold" id="monthCaptures">0</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="border-b border-white/10 mb-6">
+            <div class="flex gap-2">
+                <div class="tab active" data-tab="members">Members</div>
+                <div class="tab" data-tab="activity">Activity Log</div>
+                <div class="tab" data-tab="settings">Settings</div>
+            </div>
+        </div>
+
+        <!-- Members Tab -->
+        <div id="membersTab" class="tab-content">
+            <div class="glass rounded-2xl p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl font-bold">Team Members</h2>
+                    <button class="btn-primary" id="inviteMemberBtn">+ Invite Member</button>
+                </div>
+
+                <!-- Members Table -->
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead>
+                            <tr class="text-left text-gray-400 text-sm border-b border-white/10">
+                                <th class="pb-3">Name</th>
+                                <th class="pb-3">Email</th>
+                                <th class="pb-3">Role</th>
+                                <th class="pb-3">Status</th>
+                                <th class="pb-3">Captures (30d)</th>
+                                <th class="pb-3">Joined</th>
+                                <th class="pb-3">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="membersTableBody">
+                            <tr>
+                                <td colspan="7" class="text-center py-8 text-gray-400">
+                                    Loading members...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Activity Log Tab -->
+        <div id="activityTab" class="tab-content" style="display: none;">
+            <div class="glass rounded-2xl p-6">
+                <h2 class="text-2xl font-bold mb-6">Recent Activity</h2>
+                <div id="activityLog">
+                    <div class="text-center py-8 text-gray-400">
+                        Loading activity...
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Settings Tab -->
+        <div id="settingsTab" class="tab-content" style="display: none;">
+            <div class="glass rounded-2xl p-6">
+                <h2 class="text-2xl font-bold mb-6">Organization Settings</h2>
+
+                <div class="space-y-6">
+                    <!-- Organization Name -->
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Organization Name</label>
+                        <input type="text" id="orgNameInput" class="input-field" placeholder="Your Organization">
+                    </div>
+
+                    <!-- Subscription Plan -->
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Current Plan</label>
+                        <div class="glass p-4 rounded-lg">
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <div class="font-semibold text-lg" id="currentPlan">Enterprise</div>
+                                    <div class="text-sm text-gray-400" id="planDetails">Unlimited captures for your team</div>
+                                </div>
+                                <button class="btn-secondary" id="manageBillingBtn">Manage Billing</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Save Button -->
+                    <div>
+                        <button class="btn-primary" id="saveSettingsBtn">Save Changes</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Invite Member Modal -->
+    <div id="inviteMemberModal" class="modal">
+        <div class="glass rounded-2xl p-8 max-w-md w-full mx-4">
+            <h2 class="text-2xl font-bold mb-6">Invite Team Member</h2>
+
+            <form id="inviteMemberForm" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium mb-2">Email Address</label>
+                    <input type="email" id="inviteEmail" class="input-field" placeholder="colleague@company.com" required>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium mb-2">Role</label>
+                    <select id="inviteRole" class="input-field">
+                        <option value="member">Member</option>
+                        <option value="admin">Admin</option>
+                    </select>
+                </div>
+
+                <div class="flex gap-4 mt-6">
+                    <button type="submit" class="btn-primary flex-1">Send Invitation</button>
+                    <button type="button" class="btn-secondary flex-1" id="cancelInviteBtn">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Edit Member Modal -->
+    <div id="editMemberModal" class="modal">
+        <div class="glass rounded-2xl p-8 max-w-md w-full mx-4">
+            <h2 class="text-2xl font-bold mb-6">Edit Member</h2>
+
+            <form id="editMemberForm" class="space-y-4">
+                <input type="hidden" id="editMemberId">
+
+                <div>
+                    <label class="block text-sm font-medium mb-2">Email</label>
+                    <input type="email" id="editMemberEmail" class="input-field" disabled>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium mb-2">Role</label>
+                    <select id="editMemberRole" class="input-field">
+                        <option value="member">Member</option>
+                        <option value="admin">Admin</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium mb-2">Status</label>
+                    <select id="editMemberStatus" class="input-field">
+                        <option value="active">Active</option>
+                        <option value="inactive">Inactive</option>
+                    </select>
+                </div>
+
+                <div class="flex gap-4 mt-6">
+                    <button type="submit" class="btn-primary flex-1">Save Changes</button>
+                    <button type="button" class="btn-secondary flex-1" id="cancelEditBtn">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // API Configuration
+        const API_BASE_URL = 'https://f7otmeecqdf3ylgq4lddth7h4u0bnuxe.lambda-url.us-east-1.on.aws';
+
+        // Get auth token
+        const authToken = localStorage.getItem('auth_token') || sessionStorage.getItem('auth_token');
+        const user = JSON.parse(localStorage.getItem('user') || sessionStorage.getItem('user') || '{}');
+
+        // Check if user is logged in and has organization access
+        if (!authToken) {
+            window.location.href = 'login.html';
+        }
+
+        // Tab switching
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                const tabName = tab.dataset.tab;
+
+                // Update active tab
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+
+                // Show corresponding content
+                document.querySelectorAll('.tab-content').forEach(content => {
+                    content.style.display = 'none';
+                });
+                document.getElementById(`${tabName}Tab`).style.display = 'block';
+            });
+        });
+
+        // Logout
+        document.getElementById('logoutBtn').addEventListener('click', () => {
+            localStorage.removeItem('auth_token');
+            localStorage.removeItem('user');
+            sessionStorage.removeItem('auth_token');
+            sessionStorage.removeItem('user');
+            window.location.href = 'index.html';
+        });
+
+        // Invite Member Modal
+        document.getElementById('inviteMemberBtn').addEventListener('click', () => {
+            document.getElementById('inviteMemberModal').classList.add('show');
+        });
+
+        document.getElementById('cancelInviteBtn').addEventListener('click', () => {
+            document.getElementById('inviteMemberModal').classList.remove('show');
+        });
+
+        document.getElementById('inviteMemberForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const email = document.getElementById('inviteEmail').value;
+            const role = document.getElementById('inviteRole').value;
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/org/members/invite`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${authToken}`
+                    },
+                    body: JSON.stringify({ email, role })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    alert('Invitation sent successfully!');
+                    document.getElementById('inviteMemberModal').classList.remove('show');
+                    document.getElementById('inviteMemberForm').reset();
+                    loadMembers();
+                } else {
+                    alert(data.error || 'Failed to send invitation');
+                }
+            } catch (error) {
+                console.error('Error sending invitation:', error);
+                alert('Error sending invitation');
+            }
+        });
+
+        // Edit Member Modal
+        document.getElementById('cancelEditBtn').addEventListener('click', () => {
+            document.getElementById('editMemberModal').classList.remove('show');
+        });
+
+        document.getElementById('editMemberForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const memberId = document.getElementById('editMemberId').value;
+            const role = document.getElementById('editMemberRole').value;
+            const status = document.getElementById('editMemberStatus').value;
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/org/members/${memberId}`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${authToken}`
+                    },
+                    body: JSON.stringify({ role, status })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    alert('Member updated successfully!');
+                    document.getElementById('editMemberModal').classList.remove('show');
+                    loadMembers();
+                } else {
+                    alert(data.error || 'Failed to update member');
+                }
+            } catch (error) {
+                console.error('Error updating member:', error);
+                alert('Error updating member');
+            }
+        });
+
+        // Load organization data
+        async function loadOrgData() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/org/dashboard`, {
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to load organization data');
+                }
+
+                const data = await response.json();
+                const stats = data.stats;
+
+                // Update stats
+                document.getElementById('totalMembers').textContent = stats.total_members || 0;
+                document.getElementById('activeMembers').textContent = stats.active_members || 0;
+                document.getElementById('monthlyCaptures').textContent = stats.monthly_captures || 0;
+                document.getElementById('licenseLimit').textContent = stats.license_limit || 'Unlimited';
+
+                // Update usage
+                document.getElementById('totalCaptures').textContent = stats.total_captures || 0;
+                document.getElementById('captureLimit').textContent = stats.capture_limit || 'Unlimited';
+
+                const usagePercent = stats.capture_limit ?
+                    Math.min(100, (stats.total_captures / stats.capture_limit) * 100) : 0;
+                document.getElementById('usageProgress').style.width = `${usagePercent}%`;
+
+                document.getElementById('todayCaptures').textContent = stats.today_captures || 0;
+                document.getElementById('weekCaptures').textContent = stats.week_captures || 0;
+                document.getElementById('monthCaptures').textContent = stats.month_captures || 0;
+
+                // Update org name
+                document.getElementById('orgName').textContent = data.organization?.name || 'Organization';
+                document.getElementById('orgNameInput').value = data.organization?.name || '';
+
+            } catch (error) {
+                console.error('Error loading organization data:', error);
+            }
+        }
+
+        // Load members
+        async function loadMembers() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/org/members`, {
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to load members');
+                }
+
+                const data = await response.json();
+                const members = data.members || [];
+
+                const tbody = document.getElementById('membersTableBody');
+
+                if (members.length === 0) {
+                    tbody.innerHTML = `
+                        <tr>
+                            <td colspan="7" class="text-center py-8 text-gray-400">
+                                No members found. Invite your first team member!
+                            </td>
+                        </tr>
+                    `;
+                    return;
+                }
+
+                tbody.innerHTML = members.map(member => `
+                    <tr class="member-row">
+                        <td class="py-4 px-2">${member.full_name || 'N/A'}</td>
+                        <td class="py-4 px-2">${member.email}</td>
+                        <td class="py-4 px-2">
+                            <span class="badge ${member.org_role === 'admin' ? 'badge-admin' : 'badge-member'}">
+                                ${member.org_role || 'member'}
+                            </span>
+                        </td>
+                        <td class="py-4 px-2">
+                            <span class="badge ${member.status === 'active' ? 'badge-active' : 'badge-inactive'}">
+                                ${member.status || 'active'}
+                            </span>
+                        </td>
+                        <td class="py-4 px-2">${member.captures_30d || 0}</td>
+                        <td class="py-4 px-2">${new Date(member.created_at).toLocaleDateString()}</td>
+                        <td class="py-4 px-2">
+                            <button class="btn-secondary text-sm py-1 px-3" onclick="editMember(${member.id}, '${member.email}', '${member.org_role}', '${member.status}')">
+                                Edit
+                            </button>
+                        </td>
+                    </tr>
+                `).join('');
+
+            } catch (error) {
+                console.error('Error loading members:', error);
+                document.getElementById('membersTableBody').innerHTML = `
+                    <tr>
+                        <td colspan="7" class="text-center py-8 text-red-400">
+                            Error loading members
+                        </td>
+                    </tr>
+                `;
+            }
+        }
+
+        // Edit member function
+        function editMember(id, email, role, status) {
+            document.getElementById('editMemberId').value = id;
+            document.getElementById('editMemberEmail').value = email;
+            document.getElementById('editMemberRole').value = role;
+            document.getElementById('editMemberStatus').value = status;
+            document.getElementById('editMemberModal').classList.add('show');
+        }
+
+        // Load activity log
+        async function loadActivity() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/org/activity`, {
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to load activity');
+                }
+
+                const data = await response.json();
+                const activities = data.activities || [];
+
+                const activityLog = document.getElementById('activityLog');
+
+                if (activities.length === 0) {
+                    activityLog.innerHTML = `
+                        <div class="text-center py-8 text-gray-400">
+                            No recent activity
+                        </div>
+                    `;
+                    return;
+                }
+
+                activityLog.innerHTML = activities.map(activity => `
+                    <div class="glass p-4 rounded-lg mb-3">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <div class="font-semibold">${activity.user_email}</div>
+                                <div class="text-sm text-gray-400">${activity.action}</div>
+                            </div>
+                            <div class="text-sm text-gray-400">
+                                ${new Date(activity.created_at).toLocaleString()}
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+
+            } catch (error) {
+                console.error('Error loading activity:', error);
+            }
+        }
+
+        // Manage billing
+        document.getElementById('manageBillingBtn').addEventListener('click', async () => {
+            try {
+                const response = await fetch(`${API_BASE_URL}/stripe/create-portal-session`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${authToken}`
+                    },
+                    body: JSON.stringify({
+                        return_url: window.location.href
+                    })
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.url) {
+                    window.location.href = data.url;
+                } else {
+                    alert(data.error || 'Failed to open billing portal');
+                }
+            } catch (error) {
+                console.error('Error opening billing portal:', error);
+                alert('Error opening billing portal');
+            }
+        });
+
+        // Save settings
+        document.getElementById('saveSettingsBtn').addEventListener('click', async () => {
+            const orgName = document.getElementById('orgNameInput').value;
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/org/settings`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${authToken}`
+                    },
+                    body: JSON.stringify({ name: orgName })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    alert('Settings saved successfully!');
+                    loadOrgData();
+                } else {
+                    alert(data.error || 'Failed to save settings');
+                }
+            } catch (error) {
+                console.error('Error saving settings:', error);
+                alert('Error saving settings');
+            }
+        });
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            loadOrgData();
+            loadMembers();
+            loadActivity();
+        });
+    </script>
+</body>
+</html>
