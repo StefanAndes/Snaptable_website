@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enterprise Pricing - SnapTable</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background: linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 100%);
+            color: white;
+            min-height: 100vh;
+        }
+        .glass {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .input-field {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: white;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            width: 100%;
+        }
+        .input-field:focus {
+            outline: none;
+            border-color: #f59e0b;
+            background: rgba(255, 255, 255, 0.08);
+        }
+        .input-field::placeholder {
+            color: rgba(255, 255, 255, 0.4);
+        }
+        select.input-field {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='white'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 0.75rem center;
+            background-size: 1.25rem;
+            padding-right: 2.5rem;
+        }
+        select.input-field option {
+            background: #1a1a1a;
+            color: white;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            padding: 0.75rem 2rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(245, 158, 11, 0.3);
+        }
+        .success-message {
+            background: rgba(34, 197, 94, 0.1);
+            border: 1px solid rgba(34, 197, 94, 0.3);
+            color: #86efac;
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="min-h-screen flex items-center justify-center px-6 py-12">
+        <div class="max-w-lg w-full">
+            <!-- Logo/Header -->
+            <div class="text-center mb-8">
+                <a href="index.html" class="inline-block mb-4">
+                    <span class="text-3xl font-bold">SnapTable</span>
+                </a>
+                <h1 class="text-3xl font-bold mb-2">Enterprise Pricing</h1>
+                <p class="text-gray-400">Get a custom quote for your team</p>
+            </div>
+
+            <!-- Form -->
+            <div class="glass rounded-2xl p-8">
+                <!-- Success Message (shown after submission) -->
+                <div id="successMessage" class="success-message mb-6 text-center">
+                    <div class="text-4xl mb-4">&#10003;</div>
+                    <h3 class="text-xl font-semibold mb-2">Thank you!</h3>
+                    <p>We've received your inquiry and will get back to you within 1 business day.</p>
+                </div>
+
+                <form name="enterprise" method="POST" data-netlify="true" netlify-honeypot="bot-field" id="enterpriseForm" class="space-y-5">
+                    <!-- Honeypot field for spam protection -->
+                    <input type="hidden" name="form-name" value="enterprise">
+                    <p class="hidden">
+                        <label>Don't fill this out: <input name="bot-field"></label>
+                    </p>
+
+                    <!-- Contact Name -->
+                    <div>
+                        <label for="name" class="block text-sm font-medium mb-2">Your Name *</label>
+                        <input
+                            type="text"
+                            id="name"
+                            name="name"
+                            class="input-field"
+                            placeholder="John Smith"
+                            required
+                        />
+                    </div>
+
+                    <!-- Email -->
+                    <div>
+                        <label for="email" class="block text-sm font-medium mb-2">Work Email *</label>
+                        <input
+                            type="email"
+                            id="email"
+                            name="email"
+                            class="input-field"
+                            placeholder="john@company.com"
+                            required
+                        />
+                    </div>
+
+                    <!-- Company Name -->
+                    <div>
+                        <label for="company" class="block text-sm font-medium mb-2">Company Name *</label>
+                        <input
+                            type="text"
+                            id="company"
+                            name="company"
+                            class="input-field"
+                            placeholder="Acme Corporation"
+                            required
+                        />
+                    </div>
+
+                    <!-- Number of Users -->
+                    <div>
+                        <label for="users" class="block text-sm font-medium mb-2">Number of Users *</label>
+                        <select id="users" name="users" class="input-field" required>
+                            <option value="">Select team size</option>
+                            <option value="5-10">5-10 users</option>
+                            <option value="11-25">11-25 users</option>
+                            <option value="26-50">26-50 users</option>
+                            <option value="51-100">51-100 users</option>
+                            <option value="100+">100+ users</option>
+                        </select>
+                    </div>
+
+                    <!-- Industry -->
+                    <div>
+                        <label for="industry" class="block text-sm font-medium mb-2">Industry</label>
+                        <select id="industry" name="industry" class="input-field">
+                            <option value="">Select industry</option>
+                            <option value="Accounting">Accounting / Finance</option>
+                            <option value="Legal">Legal</option>
+                            <option value="Healthcare">Healthcare</option>
+                            <option value="Insurance">Insurance</option>
+                            <option value="Banking">Banking</option>
+                            <option value="Consulting">Consulting</option>
+                            <option value="Government">Government</option>
+                            <option value="Education">Education</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+
+                    <!-- Estimated Monthly Captures -->
+                    <div>
+                        <label for="captures" class="block text-sm font-medium mb-2">Estimated Monthly Captures</label>
+                        <select id="captures" name="captures" class="input-field">
+                            <option value="">Select estimate</option>
+                            <option value="1000-5000">1,000 - 5,000</option>
+                            <option value="5000-10000">5,000 - 10,000</option>
+                            <option value="10000-25000">10,000 - 25,000</option>
+                            <option value="25000+">25,000+</option>
+                            <option value="Not sure">Not sure yet</option>
+                        </select>
+                    </div>
+
+                    <!-- Special Requirements -->
+                    <div>
+                        <label for="requirements" class="block text-sm font-medium mb-2">Special Requirements</label>
+                        <div class="space-y-2 text-sm">
+                            <label class="flex items-center gap-2">
+                                <input type="checkbox" name="requirements[]" value="BAA" class="rounded">
+                                <span class="text-gray-300">BAA (HIPAA compliance)</span>
+                            </label>
+                            <label class="flex items-center gap-2">
+                                <input type="checkbox" name="requirements[]" value="SSO" class="rounded">
+                                <span class="text-gray-300">SSO / SAML integration</span>
+                            </label>
+                            <label class="flex items-center gap-2">
+                                <input type="checkbox" name="requirements[]" value="Custom Contract" class="rounded">
+                                <span class="text-gray-300">Custom contract / MSA</span>
+                            </label>
+                            <label class="flex items-center gap-2">
+                                <input type="checkbox" name="requirements[]" value="On-premise" class="rounded">
+                                <span class="text-gray-300">On-premise deployment</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Additional Notes -->
+                    <div>
+                        <label for="notes" class="block text-sm font-medium mb-2">Anything else we should know?</label>
+                        <textarea
+                            id="notes"
+                            name="notes"
+                            rows="3"
+                            class="input-field"
+                            placeholder="Tell us about your use case, timeline, or any questions..."
+                        ></textarea>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <button type="submit" class="btn-primary w-full" id="submitBtn">
+                        Request Pricing
+                    </button>
+
+                    <p class="text-xs text-gray-500 text-center mt-4">
+                        We'll respond within 1 business day. No spam, ever.
+                    </p>
+                </form>
+
+                <!-- Back to Home -->
+                <div class="mt-6 text-center">
+                    <a href="index.html" class="text-sm text-gray-400 hover:text-white">
+                        &larr; Back to Home
+                    </a>
+                </div>
+            </div>
+
+            <!-- Enterprise Benefits -->
+            <div class="mt-8 glass rounded-xl p-6">
+                <h3 class="font-semibold mb-4 text-center">Enterprise Benefits</h3>
+                <div class="grid grid-cols-2 gap-4 text-sm text-gray-300">
+                    <div class="flex items-start gap-2">
+                        <span class="text-amber-400">&#10003;</span>
+                        <span>Unlimited captures</span>
+                    </div>
+                    <div class="flex items-start gap-2">
+                        <span class="text-amber-400">&#10003;</span>
+                        <span>Volume discounts</span>
+                    </div>
+                    <div class="flex items-start gap-2">
+                        <span class="text-amber-400">&#10003;</span>
+                        <span>Team management</span>
+                    </div>
+                    <div class="flex items-start gap-2">
+                        <span class="text-amber-400">&#10003;</span>
+                        <span>Priority support</span>
+                    </div>
+                    <div class="flex items-start gap-2">
+                        <span class="text-amber-400">&#10003;</span>
+                        <span>Custom BAA/contracts</span>
+                    </div>
+                    <div class="flex items-start gap-2">
+                        <span class="text-amber-400">&#10003;</span>
+                        <span>Dedicated onboarding</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Handle form submission
+        const form = document.getElementById('enterpriseForm');
+        const successMessage = document.getElementById('successMessage');
+        const submitBtn = document.getElementById('submitBtn');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Sending...';
+
+            try {
+                const formData = new FormData(form);
+
+                const response = await fetch('/', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: new URLSearchParams(formData).toString()
+                });
+
+                if (response.ok) {
+                    // Show success message
+                    form.style.display = 'none';
+                    successMessage.style.display = 'block';
+                } else {
+                    throw new Error('Form submission failed');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Something went wrong. Please try again or email us at info@snaptable.app');
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Request Pricing';
+            }
+        });
+    </script>
+</body>
+</html>
