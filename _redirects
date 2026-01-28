@@ -1,0 +1,2 @@
+# Proxy API requests through snaptable.app to Lambda
+/api/*  https://f7otmeecqdf3ylgq4lddth7h4u0bnuxe.lambda-url.us-east-1.on.aws/:splat  200
