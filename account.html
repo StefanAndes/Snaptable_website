@@ -216,6 +216,21 @@
 
         // Check authentication on page load
         window.addEventListener('DOMContentLoaded', () => {
+            // Check for token in URL (from Google OAuth callback)
+            const urlParams = new URLSearchParams(window.location.search);
+            const urlToken = urlParams.get('token');
+
+            if (urlToken) {
+                // Store token from OAuth callback
+                localStorage.setItem('auth_token', urlToken);
+
+                // Clean URL by removing token parameter
+                const cleanUrl = window.location.pathname;
+                window.history.replaceState({}, document.title, cleanUrl);
+
+                console.log('Token received from OAuth callback');
+            }
+
             checkAuth();
             loadUserData();
             loadUsageStats();
