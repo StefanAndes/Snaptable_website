@@ -192,11 +192,11 @@
             </div>
         </div>
 
-        <!-- Download Section -->
-        <div class="glass rounded-xl p-6 mb-6">
+        <!-- Download Section (hidden until user has subscription) -->
+        <div class="glass rounded-xl p-6 mb-6 hidden" id="downloadSection">
             <h2 class="text-xl font-semibold mb-4">Desktop Application</h2>
             <p class="text-gray-300 mb-4">Download and install the SnapTable desktop app to start capturing tables.</p>
-            <a href="download.html" class="btn-primary inline-block">Download for Windows</a>
+            <a href="download-auth.html" class="btn-primary inline-block">Download for Windows</a>
             <p class="text-sm text-gray-400 mt-4">The desktop app will automatically connect using your login credentials.</p>
         </div>
 
@@ -333,11 +333,13 @@
                 freePlanCTA.classList.add('hidden');
                 activeSubscriptionInfo.classList.add('hidden');
 
-                // Show usage stats only if org has active subscription
+                // Show usage stats and download only if org has active subscription
                 if (status === 'active' || status === 'trialing') {
                     document.getElementById('usageSection').classList.remove('hidden');
+                    document.getElementById('downloadSection').classList.remove('hidden');
                 } else {
                     document.getElementById('usageSection').classList.add('hidden');
+                    document.getElementById('downloadSection').classList.add('hidden');
                 }
 
                 // Show organization billing info with admin controls
@@ -379,15 +381,17 @@
             }
 
             if (planType === 'free' || status === 'inactive') {
-                // Show upgrade options, hide usage stats (no subscription yet)
+                // Show upgrade options, hide usage stats and download (no subscription yet)
                 freePlanCTA.classList.remove('hidden');
                 activeSubscriptionInfo.classList.add('hidden');
                 document.getElementById('usageSection').classList.add('hidden');
+                document.getElementById('downloadSection').classList.add('hidden');
             } else {
-                // Show active subscription info and usage stats
+                // Show active subscription info, usage stats, and download
                 freePlanCTA.classList.add('hidden');
                 activeSubscriptionInfo.classList.remove('hidden');
                 document.getElementById('usageSection').classList.remove('hidden');
+                document.getElementById('downloadSection').classList.remove('hidden');
 
                 // Update plan name
                 document.getElementById('currentPlanName').textContent =
