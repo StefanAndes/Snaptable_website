@@ -102,8 +102,8 @@
             </div>
         </div>
 
-        <!-- Usage Statistics Section -->
-        <div class="glass rounded-xl p-6 mb-6">
+        <!-- Usage Statistics Section (hidden until user has subscription) -->
+        <div class="glass rounded-xl p-6 mb-6 hidden" id="usageSection">
             <h2 class="text-xl font-semibold mb-4">Usage This Month</h2>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div class="stat-card">
@@ -136,7 +136,7 @@
 
             <!-- Free Plan CTA -->
             <div id="freePlanCTA" class="hidden">
-                <p class="text-gray-300 mb-4">Upgrade to extract more tables with a SnapTable subscription.</p>
+                <p class="text-gray-300 mb-4">Choose a plan to start your 7-day free trial. No charge until the trial ends.</p>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                     <div class="stat-card">
                         <h3 class="text-lg font-semibold mb-2">Starter</h3>
@@ -333,6 +333,13 @@
                 freePlanCTA.classList.add('hidden');
                 activeSubscriptionInfo.classList.add('hidden');
 
+                // Show usage stats only if org has active subscription
+                if (status === 'active' || status === 'trialing') {
+                    document.getElementById('usageSection').classList.remove('hidden');
+                } else {
+                    document.getElementById('usageSection').classList.add('hidden');
+                }
+
                 // Show organization billing info with admin controls
                 const isOrgAdmin = user.org_role === 'admin';
 
@@ -372,13 +379,15 @@
             }
 
             if (planType === 'free' || status === 'inactive') {
-                // Show upgrade options
+                // Show upgrade options, hide usage stats (no subscription yet)
                 freePlanCTA.classList.remove('hidden');
                 activeSubscriptionInfo.classList.add('hidden');
+                document.getElementById('usageSection').classList.add('hidden');
             } else {
-                // Show active subscription info
+                // Show active subscription info and usage stats
                 freePlanCTA.classList.add('hidden');
                 activeSubscriptionInfo.classList.remove('hidden');
+                document.getElementById('usageSection').classList.remove('hidden');
 
                 // Update plan name
                 document.getElementById('currentPlanName').textContent =
