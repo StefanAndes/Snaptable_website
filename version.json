@@ -1,6 +1,1 @@
-{
-    "version": "1.0.0",
-    "download_url": "DOWNLOAD_LINK",
-    "release_notes": "Initial release - Extract tables from screenshots to Excel instantly. Works across multiple monitors with mouse trigger support.",
-    "required": false
-}
+{"version": "1.0.0", "url": "https://snaptable.app"}
