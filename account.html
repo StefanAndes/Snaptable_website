@@ -136,32 +136,13 @@
 
             <!-- Free Plan CTA -->
             <div id="freePlanCTA" class="hidden">
-                <p class="text-gray-300 mb-4">Choose a plan to start your 7-day free trial. No charge until the trial ends.</p>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                    <div class="stat-card">
-                        <h3 class="text-lg font-semibold mb-2">Starter</h3>
-                        <p class="text-3xl font-bold mb-2">$4.99<span class="text-lg text-gray-400">/mo</span></p>
-                        <ul class="text-sm text-gray-300 mb-4 space-y-1">
-                            <li>• 750 captures/month</li>
-                            <li>• ~25 captures per day</li>
-                            <li>• All extraction features</li>
-                            <li>• Cancel anytime</li>
-                        </ul>
-                        <a href="https://buy.stripe.com/bJeaEZ83B7AC26Y0p28k803" class="btn-primary inline-block text-center w-full">Start 7-Day Free Trial</a>
-                    </div>
-                    <div class="stat-card">
-                        <h3 class="text-lg font-semibold mb-2">Pro</h3>
-                        <p class="text-3xl font-bold mb-2">$11.99<span class="text-lg text-gray-400">/mo</span></p>
-                        <ul class="text-sm text-gray-300 mb-4 space-y-1">
-                            <li>• 2,000 captures/month</li>
-                            <li>• ~67 captures per day</li>
-                            <li>• All extraction features</li>
-                            <li>• Cancel anytime</li>
-                        </ul>
-                        <a href="https://buy.stripe.com/4gM3cxdnV9IKbHyb3G8k802" class="btn-primary inline-block text-center w-full">Start 7-Day Free Trial</a>
-                    </div>
+                <p class="text-gray-300 mb-4">You're using SnapTable Cloud with a free account.</p>
+                <div class="stat-card mb-6">
+                    <h3 class="text-lg font-semibold mb-2">Want unlimited local captures?</h3>
+                    <p class="text-gray-300 mb-4">Get SnapTable for a one-time payment — no subscription, no account needed, runs 100% on your computer.</p>
+                    <a href="https://buy.stripe.com/aFa7sN0B96wy4f6fjW8k804" class="btn-primary inline-block text-center w-full">Buy SnapTable — $29.99</a>
+                    <p class="text-xs text-gray-500 mt-2 text-center">One-time payment. Yours forever.</p>
                 </div>
-                <p class="text-sm text-gray-400">All plans include a 7-day free trial. Cancel anytime.</p>
             </div>
 
             <!-- Active Subscription Info -->
@@ -511,8 +492,8 @@
         }
 
         function upgradeSubscription() {
-            // Redirect to Pro plan checkout
-            window.location.href = 'https://buy.stripe.com/4gM3cxdnV9IKbHyb3G8k802';
+            // Redirect to $29.99 local purchase
+            window.location.href = 'https://buy.stripe.com/aFa7sN0B96wy4f6fjW8k804';
         }
 
         function copyToken() {

@@ -79,7 +79,7 @@
                     <div>
                         <h3 class="text-xl font-semibold mb-2">Login with Your Email</h3>
                         <p class="text-gray-400">
-                            When SnapTable opens, login with the email you used to subscribe.<br>
+                            When SnapTable opens, login with your account email.<br>
                             <strong>Email:</strong> <span id="loginEmail" class="text-purple-400">Loading...</span>
                         </p>
                     </div>
@@ -98,12 +98,12 @@
 
         <!-- What You Get -->
         <div class="glass rounded-2xl p-8 mb-8">
-            <h2 class="text-2xl font-bold mb-6">What's Included in Your Subscription</h2>
+            <h2 class="text-2xl font-bold mb-6">What's Included</h2>
 
             <div class="grid md:grid-cols-2 gap-4">
                 <div class="flex items-start gap-3">
                     <span class="text-green-400 text-xl">✓</span>
-                    <span>Unlimited table captures</span>
+                    <span>Cloud-powered table extraction</span>
                 </div>
                 <div class="flex items-start gap-3">
                     <span class="text-green-400 text-xl">✓</span>
@@ -111,37 +111,17 @@
                 </div>
                 <div class="flex items-start gap-3">
                     <span class="text-green-400 text-xl">✓</span>
-                    <span>Zero-storage security</span>
-                </div>
-                <div class="flex items-start gap-3">
-                    <span class="text-green-400 text-xl">✓</span>
-                    <span>HIPAA compliant</span>
-                </div>
-                <div class="flex items-start gap-3">
-                    <span class="text-green-400 text-xl">✓</span>
-                    <span>Bank-level encryption</span>
+                    <span>High accuracy on complex tables</span>
                 </div>
                 <div class="flex items-start gap-3">
                     <span class="text-green-400 text-xl">✓</span>
                     <span>Automatic updates</span>
                 </div>
             </div>
-        </div>
 
-        <!-- Trial Information -->
-        <div class="glass rounded-2xl p-8 mb-8">
-            <h2 class="text-2xl font-bold mb-4">About Your Trial</h2>
-
-            <div class="space-y-3 text-gray-300">
-                <p><strong>Trial Period:</strong> 7 days from today</p>
-                <p><strong>First Charge:</strong> <span id="chargeDate">7 days from now</span></p>
-                <p><strong>Billing:</strong> Monthly subscription (cancel anytime)</p>
-                <p><strong>Support:</strong> Email us at <a href="mailto:info@snaptable.app" class="text-purple-400 hover:underline">info@snaptable.app</a></p>
-            </div>
-
-            <div class="mt-6 p-4 bg-yellow-900/20 border border-yellow-700/50 rounded-lg">
-                <p class="text-yellow-200 text-sm">
-                    <strong>💡 Reminder:</strong> You won't be charged during your 7-day trial. Cancel anytime before trial ends to pay nothing.
+            <div class="mt-6 p-4 glass rounded-lg">
+                <p class="text-gray-300 text-sm">
+                    <strong>Need help?</strong> Email us at <a href="mailto:support@snaptable.app" class="text-purple-400 hover:underline">support@snaptable.app</a>
                 </p>
             </div>
         </div>
@@ -180,7 +160,7 @@
             } else {
                 // No user info - show generic message
                 document.getElementById('welcomeText').textContent =
-                    'Thank you for subscribing!';
+                    'Download SnapTable Cloud below.';
                 document.getElementById('loginEmail').textContent = 'the email you used to subscribe';
             }
         }
@@ -238,7 +218,6 @@
         // Initialize on page load
         document.addEventListener('DOMContentLoaded', () => {
             validateToken();
-            setChargeDate();
         });
     </script>
 </body>
